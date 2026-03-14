@@ -1,4 +1,6 @@
 package ma.toubkalit.enums;
 
-public class EtatPaiement {
+public enum EtatPaiement {
+    NON_PAYEE,
+    PAYEE
 }

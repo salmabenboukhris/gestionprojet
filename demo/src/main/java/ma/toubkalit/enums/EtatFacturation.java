@@ -1,4 +1,6 @@
 package ma.toubkalit.enums;
 
-public class EtatFacturation {
+public enum EtatFacturation {
+    NON_FACTUREE,
+    FACTUREE
 }

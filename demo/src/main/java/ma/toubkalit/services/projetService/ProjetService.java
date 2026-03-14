@@ -1,23 +1,20 @@
 package ma.toubkalit.services.projetService;
 
 import ma.toubkalit.entity.projet.Projet;
-import ma.toubkalit.repositories.projetRepo.ProjetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class ProjetService {
+public interface ProjetService {
 
-    @Autowired
-    ProjetRepository projetRepository;
+    Projet saveProjet(Projet projet);
 
-    public List<Projet> getAll() {
-        return projetRepository.findAll();
-    }
+    Projet updateProjet(Integer id, Projet projet);
 
-    public Projet save(Projet projet) {
-        return projetRepository.save(projet);
-    }
+    Projet getProjetById(Integer id);
+
+    Projet getProjetByCode(String code);
+
+    List<Projet> getAllProjets();
+
+    void deleteProjet(Integer id);
 }

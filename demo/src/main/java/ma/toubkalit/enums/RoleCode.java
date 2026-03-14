@@ -1,4 +1,10 @@
 package ma.toubkalit.enums;
 
-public class RoleCode {
+public enum RoleCode {
+    ADMIN,
+    DIRECTEUR,
+    CHEF_PROJET,
+    SECRETAIRE,
+    COMPTABLE,
+    EMPLOYE
 }

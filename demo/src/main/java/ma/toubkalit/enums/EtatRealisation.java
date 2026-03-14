@@ -1,4 +1,6 @@
 package ma.toubkalit.enums;
 
-public class EtatRealisation {
+public enum EtatRealisation {
+    NON_TERMINEE,
+    TERMINEE
 }
