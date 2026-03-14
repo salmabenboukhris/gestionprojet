@@ -1,22 +1,32 @@
 package ma.toubkalit.entity.projet;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import lombok.*;
+import java.time.LocalDate;
 import ma.toubkalit.entity.organisation.Employe;
 
 @Entity
+@Table(name = "ligne_employe_phase")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class LigneEmployePhase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    private Date dateDebut;
-    private Date dateFin;
+    private LocalDate dateDebut;
+
+    private LocalDate dateFin;
 
     @ManyToOne
+    @JoinColumn(name = "employe_id")
     private Employe employe;
 
     @ManyToOne
+    @JoinColumn(name = "phase_id")
     private Phase phase;
 }
