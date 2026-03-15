@@ -1,102 +1,55 @@
 package ma.toubkalit.controllers.projetController;
 
-
 import lombok.RequiredArgsConstructor;
-import ma.toubkalit.entity.projet.Document;
-import ma.toubkalit.repositories.projetRepo.DocumentRepo;
-import ma.toubkalit.repositories.projetRepo.ProjetRepository;
+import ma.toubkalit.dto.DocumentDTO;
+import ma.toubkalit.mappers.DocumentMapper;
+import ma.toubkalit.services.projetService.DocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class DocumentController {
 
-    private final DocumentRepo documentRepo;
-    private final ProjetRepository projetRepo;
+    private final DocumentService documentService;
+    private final DocumentMapper documentMapper;
 
     @PostMapping("/projets/{projetId}/documents")
-    public ResponseEntity<Document> create(@PathVariable Integer projetId, @RequestBody Document document) {
-        return projetRepo.findById(projetId)
-                .map(projet -> {
-                    document.setProjet(projet);
-                    Document savedDocument = documentRepo.save(document);
-                    return new ResponseEntity<>(savedDocument, HttpStatus.CREATED);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/documents/{id}")
-    public ResponseEntity<Document> getById(@PathVariable Integer id) {
-        return documentRepo.findById(id)
-                .map(document -> ResponseEntity.ok(document))
-                .orElse(ResponseEntity.notFound().build());
+    @PreAuthorize("hasRole('SECRETAIRE')")
+    public ResponseEntity<DocumentDTO> create(@PathVariable Integer projetId, @RequestBody DocumentDTO dto) {
+        dto.setProjetId(projetId);
+        return new ResponseEntity<>(
+                documentMapper.toDTO(documentService.saveDocument(documentMapper.toEntity(dto))),
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping("/projets/{projetId}/documents")
-    public ResponseEntity<List<Document>> getByProjetId(@PathVariable Integer projetId) {
-        return projetRepo.findById(projetId)
-                .map(projet -> {
-                    List<Document> documents = documentRepo.findAll().stream()
-                            .filter(doc -> doc.getProjet() != null &&
-                                    doc.getProjet().getId() == projetId)
-                            .toList();
-                    return ResponseEntity.ok(documents);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/documents")
-    public List<Document> getAll() {
-        return documentRepo.findAll();
-    }
-
-    @GetMapping("/documents/code/{code}")
-    public ResponseEntity<Document> getByCode(@PathVariable String code) {
-        List<Document> documents = documentRepo.findAll();
-        return documents.stream()
-                .filter(doc -> code.equals(doc.getCode()))
-                .findFirst()
-                .map(document -> ResponseEntity.ok(document))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/documents/{id}")
-    public ResponseEntity<Document> update(@PathVariable Integer id, @RequestBody Document document) {
-        return documentRepo.findById(id)
-                .map(existingDocument -> {
-                    existingDocument.setCode(document.getCode());
-                    existingDocument.setLibelle(document.getLibelle());
-                    existingDocument.setDescription(document.getDescription());
-                    existingDocument.setChemin(document.getChemin());
-
-
-                    Document updatedDocument = documentRepo.save(existingDocument);
-                    return ResponseEntity.ok(updatedDocument);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/documents/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (documentRepo.existsById(id)) {
-            documentRepo.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PreAuthorize("isAuthenticated()")
+    public List<DocumentDTO> getByProjetId(@PathVariable Integer projetId) {
+        return documentService.getAllDocuments().stream()
+                .filter(doc -> doc.getProjet() != null && doc.getProjet().getId().equals(projetId))
+                .map(documentMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/documents/{id}/download")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> download(@PathVariable Integer id) {
-        return documentRepo.findById(id)
-                .map(document -> {
-                    // Logique de téléchargement à implémenter
-                    return ResponseEntity.ok("Téléchargement du document : " + document.getChemin());
-                })
-                .orElse(ResponseEntity.notFound().build());
+        // Logique de téléchargement simulée
+        return ResponseEntity.ok("Téléchargement du document " + id + " à implémenter.");
+    }
+
+    @DeleteMapping("/documents/{id}")
+    @PreAuthorize("hasRole('SECRETAIRE')")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        documentService.deleteDocument(id);
+        return ResponseEntity.noContent().build();
     }
 }

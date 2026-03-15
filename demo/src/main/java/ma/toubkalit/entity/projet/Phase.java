@@ -26,7 +26,7 @@ public class Phase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank
     @Column(nullable = false, unique = true, length = 50)
@@ -49,14 +49,17 @@ public class Phase {
     @Column(nullable = false)
     private double montant;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private EtatRealisation etatRealisation = EtatRealisation.NON_TERMINEE;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private EtatFacturation etatFacturation = EtatFacturation.NON_FACTUREE;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private EtatPaiement etatPaiement = EtatPaiement.NON_PAYEE;
@@ -71,7 +74,7 @@ public class Phase {
 
     @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<LigneEmployePhase> affectations = new ArrayList<>();
+    private List<Affectation> affectations = new ArrayList<>();
 
     @OneToOne(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
     private Facture facture;

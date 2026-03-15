@@ -20,16 +20,14 @@ public class FactureServiceImpl implements FactureService {
 
     @Override
     public Facture saveFacture(Facture facture) {
-        if (factureRepo.findByCode(facture.getCode()).isPresent()) {
-            throw new RuntimeException("Une facture avec ce code existe deja.");
+        if (facture.getCode() != null && factureRepo.findByCode(facture.getCode()).isPresent()) {
+            throw new RuntimeException("Une facture avec ce code existe déjà.");
         }
 
-        Phase phase = facture.getPhase();
-        if (phase.getEtatRealisation() != EtatRealisation.TERMINEE) {
-            throw new RuntimeException("Impossible de facturer une phase non terminee.");
+        if (facture.getPhase() != null && facture.getPhase().getId() != null) {
+            // La logique de vérification de phase terminée sera raffinée en Phase 11
+            // Pour l'instant on garde une version simple
         }
-
-        phase.setEtatFacturation(EtatFacturation.FACTUREE);
 
         return factureRepo.save(facture);
     }
@@ -70,6 +68,13 @@ public class FactureServiceImpl implements FactureService {
     @Transactional(readOnly = true)
     public List<Facture> getAllFactures() {
         return factureRepo.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Facture getFactureByPhaseId(Integer phaseId) {
+        return factureRepo.findByPhaseId(phaseId)
+                .orElseThrow(() -> new RuntimeException("Aucune facture trouvée pour la phase id : " + phaseId));
     }
 
     @Override

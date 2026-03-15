@@ -18,7 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
-public class LigneEmployePhaseId implements Serializable {
+public class AffectationId implements Serializable {
 
     @Column(name = "employe_id")
     private Integer employeId;

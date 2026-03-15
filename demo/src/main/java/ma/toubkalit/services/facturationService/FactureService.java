@@ -16,5 +16,7 @@ public interface FactureService {
 
     List<Facture> getAllFactures();
 
+    Facture getFactureByPhaseId(Integer phaseId);
+
     void deleteFacture(Integer id);
 }

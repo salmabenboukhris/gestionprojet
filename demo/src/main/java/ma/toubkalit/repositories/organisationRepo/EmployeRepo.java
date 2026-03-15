@@ -15,4 +15,10 @@ public interface EmployeRepo extends JpaRepository<Employe, Integer> {
 
     Optional<Employe> findByEmail(String email);
 
+    boolean existsByMatricule(String matricule);
+
+    boolean existsByLogin(String login);
+
+    boolean existsByEmail(String email);
+
 }

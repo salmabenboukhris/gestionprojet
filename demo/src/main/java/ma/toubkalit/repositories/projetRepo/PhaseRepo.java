@@ -15,4 +15,6 @@ public interface PhaseRepo extends JpaRepository<Phase, Integer> {
 
     List<Phase> findByEtatPaiement(EtatPaiement etatPaiement);
 
+    List<Phase> findByProjetId(Integer projetId);
+
 }

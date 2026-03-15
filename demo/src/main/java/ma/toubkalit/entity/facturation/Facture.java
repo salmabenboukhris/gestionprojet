@@ -16,11 +16,12 @@ public class Facture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String code;
-
     private LocalDate dateFacture;
+    private double montant;
+    private String description;
 
     @OneToOne
     @JoinColumn(name = "phase_id")

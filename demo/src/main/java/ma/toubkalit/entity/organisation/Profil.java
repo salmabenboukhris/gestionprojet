@@ -1,5 +1,7 @@
 package ma.toubkalit.entity.organisation;
 
+import ma.toubkalit.enums.RoleCode;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +16,10 @@ public class Profil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    private RoleCode roleCode;
 
     private String code;
 

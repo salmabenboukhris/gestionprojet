@@ -18,16 +18,16 @@ import ma.toubkalit.entity.organisation.Employe;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "ligne_employe_phase")
+@Table(name = "affectation")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LigneEmployePhase {
+public class Affectation {
 
     @EmbeddedId
-    private LigneEmployePhaseId id;
+    private AffectationId id;
 
     @Column(nullable = false)
     private LocalDate dateDebut;

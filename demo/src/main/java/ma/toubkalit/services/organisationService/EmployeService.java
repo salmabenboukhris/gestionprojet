@@ -20,5 +20,7 @@ public interface EmployeService {
 
     List<Employe> getAllEmployes();
 
+    List<Employe> getEmployesByProfil(Integer profilId);
+
     void deleteEmploye(Integer id);
 }

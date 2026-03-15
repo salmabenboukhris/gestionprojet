@@ -5,6 +5,7 @@ import ma.toubkalit.entity.projet.Phase;
 import ma.toubkalit.entity.projet.Projet;
 import ma.toubkalit.enums.EtatFacturation;
 import ma.toubkalit.enums.EtatPaiement;
+import ma.toubkalit.enums.EtatRealisation;
 import ma.toubkalit.repositories.projetRepo.PhaseRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,5 +93,26 @@ public class PhaseServiceImpl implements PhaseService {
     public void deletePhase(Integer id) {
         Phase phase = getPhaseById(id);
         phaseRepo.delete(phase);
+    }
+
+    @Override
+    public Phase updateEtatRealisation(Integer id, EtatRealisation etat) {
+        Phase phase = getPhaseById(id);
+        phase.setEtatRealisation(etat);
+        return phaseRepo.save(phase);
+    }
+
+    @Override
+    public Phase updateEtatFacturation(Integer id, EtatFacturation etat) {
+        Phase phase = getPhaseById(id);
+        phase.setEtatFacturation(etat);
+        return phaseRepo.save(phase);
+    }
+
+    @Override
+    public Phase updateEtatPaiement(Integer id, EtatPaiement etat) {
+        Phase phase = getPhaseById(id);
+        phase.setEtatPaiement(etat);
+        return phaseRepo.save(phase);
     }
 }

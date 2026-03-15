@@ -11,4 +11,6 @@ public interface FactureRepo extends JpaRepository<Facture, Integer> {
 
     Optional<Facture> findByCode(String code);
 
+    Optional<Facture> findByPhaseId(Integer phaseId);
+
 }
