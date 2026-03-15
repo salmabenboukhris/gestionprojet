@@ -1,20 +1,20 @@
 package ma.toubkalit.dto.projetDto;
 
+
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class LivrableResponse {
+public class DocumentResponse {
     private Integer id;
     private String code;
     private String libelle;
     private String description;
     private String chemin;
 
-    // Informations de la phase
-    private Integer phaseId;
-    private String phaseCode;
-    private String phaseLibelle;
+    // Informations du projet
+    private Integer projetId;
+    private String projetCode;
     private String projetNom;
 }
