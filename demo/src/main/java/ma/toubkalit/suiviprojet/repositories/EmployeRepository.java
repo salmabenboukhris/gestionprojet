@@ -1,13 +1,12 @@
-package ma.toubkalit.repositories.organisationRepo;
+package ma.toubkalit.suiviprojet.repositories;
 
-import ma.toubkalit.entity.organisation.Employe;
+import ma.toubkalit.suiviprojet.entities.Employe;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface EmployeRepo extends JpaRepository<Employe, Integer> {
+public interface EmployeRepository extends JpaRepository<Employe, Long> {
 
     Optional<Employe> findByMatricule(String matricule);
 
@@ -21,4 +20,5 @@ public interface EmployeRepo extends JpaRepository<Employe, Integer> {
 
     boolean existsByEmail(String email);
 
+    List<Employe> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(String nom, String prenom);
 }
