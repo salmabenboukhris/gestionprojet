@@ -1,13 +1,13 @@
-package ma.toubkalit;
+package ma.toubkalit.suiviprojet;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GestionprojetApplication {
+public class SuiviprojetApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GestionprojetApplication.class, args);
+		SpringApplication.run(SuiviprojetApplication.class, args);
 	}
 
 }
