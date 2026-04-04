@@ -21,10 +21,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/api/employes/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        .requestMatchers("/api/employes/**").hasRole("ADMIN")
+                        .requestMatchers("/api/organismes/**").hasAnyRole("ADMIN", "SECRETAIRE")
+                        .requestMatchers("/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE", "CHEF_PROJET")
+                        .requestMatchers("/api/phases/**").hasAnyRole("ADMIN", "CHEF_PROJET")
+                        .requestMatchers("/api/factures/**").hasAnyRole("ADMIN", "COMPTABLE")
+                        .requestMatchers("/api/reporting/**").hasAnyRole("ADMIN", "DIRECTEUR")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter,
@@ -32,5 +37,10 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 }

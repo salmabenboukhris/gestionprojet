@@ -1,5 +1,7 @@
 package ma.toubkalit.suiviprojet.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import ma.toubkalit.suiviprojet.dto.projet.ProjetRequestDto;
 import ma.toubkalit.suiviprojet.dto.projet.ProjetResponseDto;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/projets")
+@Tag(name = "Projets", description = "Gestion des projets (ADMIN, SECRETAIRE, CHEF_PROJET)")
 public class ProjetController {
 
     private final ProjetService projetService;
@@ -27,34 +30,39 @@ public class ProjetController {
     }
 
     @PutMapping("/{id}")
-    public ProjetResponseDto update(@PathVariable Long id,
+    public ProjetResponseDto update(@PathVariable("id") Long id,
                                     @Valid @RequestBody ProjetRequestDto requestDto) {
+
         return projetService.update(id, requestDto);
     }
 
     @GetMapping("/{id}")
-    public ProjetResponseDto getById(@PathVariable Long id) {
+    public ProjetResponseDto getById(@PathVariable("id") Long id) {
+
         return projetService.getById(id);
     }
 
     @GetMapping
     public List<ProjetResponseDto> getAll(
-            @RequestParam(required = false) String code,
-            @RequestParam(required = false) String nom,
-            @RequestParam(required = false) Long organismeId,
-            @RequestParam(required = false) Long chefProjetId
+            @RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "nom", required = false) String nom,
+            @RequestParam(name = "organismeId", required = false) Long organismeId,
+            @RequestParam(name = "chefProjetId", required = false) Long chefProjetId
     ) {
+
         return projetService.getAll(code, nom, organismeId, chefProjetId);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
+
         projetService.delete(id);
     }
 
     @GetMapping("/{id}/resume")
-    public ProjetResumeDto getResume(@PathVariable Long id) {
+    public ProjetResumeDto getResume(@PathVariable("id") Long id) {
+
         return projetService.getResume(id);
     }
 }

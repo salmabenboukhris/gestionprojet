@@ -24,15 +24,18 @@ public class EmployeServiceImpl implements EmployeService {
     private final ProfilRepository profilRepository;
     private final AffectationRepository affectationRepository;
     private final EmployeMapper employeMapper;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     public EmployeServiceImpl(EmployeRepository employeRepository,
                               ProfilRepository profilRepository,
                               AffectationRepository affectationRepository,
-                              EmployeMapper employeMapper) {
+                              EmployeMapper employeMapper,
+                              org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.employeRepository = employeRepository;
         this.profilRepository = profilRepository;
         this.affectationRepository = affectationRepository;
         this.employeMapper = employeMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,6 +46,7 @@ public class EmployeServiceImpl implements EmployeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Profil introuvable avec l'id : " + requestDto.getProfilId()));
 
         Employe employe = employeMapper.toEntity(requestDto, profil);
+        employe.setPassword(passwordEncoder.encode(employe.getPassword()));
         Employe saved = employeRepository.save(employe);
         return employeMapper.toResponseDto(saved);
     }
@@ -57,7 +61,15 @@ public class EmployeServiceImpl implements EmployeService {
         Profil profil = profilRepository.findById(requestDto.getProfilId())
                 .orElseThrow(() -> new ResourceNotFoundException("Profil introuvable avec l'id : " + requestDto.getProfilId()));
 
+        String oldPassword = employe.getPassword();
         employeMapper.updateEntity(employe, requestDto, profil);
+        
+        if (requestDto.getPassword() != null && !requestDto.getPassword().isBlank()) {
+            employe.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        } else {
+            employe.setPassword(oldPassword);
+        }
+        
         Employe updated = employeRepository.save(employe);
         return employeMapper.toResponseDto(updated);
     }
@@ -111,6 +123,26 @@ public class EmployeServiceImpl implements EmployeService {
         return disponibles.stream()
                 .map(employeMapper::toSearchDto)
                 .toList();
+    }
+
+    @Override
+    public EmployeResponseDto getCurrentUser(String login) {
+        Employe employe = employeRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Employé introuvable avec le login : " + login));
+        return employeMapper.toResponseDto(employe);
+    }
+
+    @Override
+    public void changePassword(String login, String oldPassword, String newPassword) {
+        Employe employe = employeRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Employé introuvable avec le login : " + login));
+
+        if (!passwordEncoder.matches(oldPassword, employe.getPassword())) {
+            throw new ma.toubkalit.suiviprojet.exceptions.OperationNotAllowedException("Ancien mot de passe incorrect");
+        }
+
+        employe.setPassword(passwordEncoder.encode(newPassword));
+        employeRepository.save(employe);
     }
 
     private void checkUniqueFields(EmployeRequestDto requestDto, Long currentId) {

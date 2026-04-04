@@ -20,4 +20,8 @@ public interface EmployeService {
     void delete(Long id);
 
     List<EmployeSearchResponseDto> getDisponibles(LocalDate dateDebut, LocalDate dateFin);
+
+    EmployeResponseDto getCurrentUser(String login);
+
+    void changePassword(String login, String oldPassword, String newPassword);
 }

@@ -1,5 +1,7 @@
 package ma.toubkalit.suiviprojet.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import ma.toubkalit.suiviprojet.dto.document.DocumentDownloadDto;
 import ma.toubkalit.suiviprojet.dto.document.DocumentRequestDto;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "Documents", description = "Gestion des documents de projets (ADMIN, CHEF_PROJET, SECRETAIRE)")
 public class DocumentController {
 
     private final DocumentService documentService;
@@ -21,35 +24,47 @@ public class DocumentController {
 
     @PostMapping("/api/projets/{projetId}/documents")
     @ResponseStatus(HttpStatus.CREATED)
-    public DocumentResponseDto create(@PathVariable Long projetId,
+    @Operation(summary = "Ajouter un document à un projet [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public DocumentResponseDto create(@PathVariable("projetId") Long projetId,
                                       @Valid @RequestBody DocumentRequestDto requestDto) {
+
         return documentService.create(projetId, requestDto);
     }
 
     @GetMapping("/api/projets/{projetId}/documents")
-    public List<DocumentResponseDto> getByProjetId(@PathVariable Long projetId) {
+    @Operation(summary = "Lister les documents d'un projet [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public List<DocumentResponseDto> getByProjetId(@PathVariable("projetId") Long projetId) {
+
         return documentService.getByProjetId(projetId);
     }
 
     @GetMapping("/api/documents/{id}")
-    public DocumentResponseDto getById(@PathVariable Long id) {
+    @Operation(summary = "Récupérer un document par ID [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public DocumentResponseDto getById(@PathVariable("id") Long id) {
+
         return documentService.getById(id);
     }
 
     @PutMapping("/api/documents/{id}")
-    public DocumentResponseDto update(@PathVariable Long id,
+    @Operation(summary = "Mettre à jour un document [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public DocumentResponseDto update(@PathVariable("id") Long id,
                                       @Valid @RequestBody DocumentRequestDto requestDto) {
+
         return documentService.update(id, requestDto);
     }
 
     @DeleteMapping("/api/documents/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @Operation(summary = "Supprimer un document [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public void delete(@PathVariable("id") Long id) {
+
         documentService.delete(id);
     }
 
     @GetMapping("/api/documents/{id}/download")
-    public DocumentDownloadDto download(@PathVariable Long id) {
+    @Operation(summary = "Télécharger un document [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public DocumentDownloadDto download(@PathVariable("id") Long id) {
+
         return documentService.download(id);
     }
 }

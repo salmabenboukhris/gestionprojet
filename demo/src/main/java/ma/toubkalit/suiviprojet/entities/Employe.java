@@ -47,9 +47,10 @@ public class Employe {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profil_id", nullable = false)
     private Profil profil;
+
 
     @OneToMany(mappedBy = "chefProjet", fetch = FetchType.LAZY)
     private List<Projet> projetsDiriges = new ArrayList<>();
