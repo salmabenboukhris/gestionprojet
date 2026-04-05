@@ -1,31 +1,27 @@
 import api from '../api';
 
-const BASE_PATH = '/affectations';
-
 export const affectationService = {
-  // GET /api/affectations/employe/{employeId}
   getByEmploye: async (employeId) => {
-    const response = await api.get(`${BASE_PATH}/employe/${employeId}`);
+    console.log(`[affectationService] GET /employes/${employeId}/phases`);
+    const response = await api.get(`/employes/${employeId}/phases`);
     return response.data;
   },
 
-  // GET /api/affectations/phase/{phaseId}
   getByPhase: async (phaseId) => {
-    const response = await api.get(`${BASE_PATH}/phase/${phaseId}`);
+    console.log(`[affectationService] GET /phases/${phaseId}/employes`);
+    const response = await api.get(`/phases/${phaseId}/employes`);
     return response.data;
   },
 
-  // POST /api/affectations
-  // Attend DTO : { employeId, phaseId, dateDebut, dateFin }
-  create: async (data) => {
-    const response = await api.post(BASE_PATH, data);
+  create: async (phaseId, employeId, data) => {
+    console.log(`[affectationService] POST /phases/${phaseId}/employes/${employeId}`, data);
+    const response = await api.post(`/phases/${phaseId}/employes/${employeId}`, data);
     return response.data;
   },
 
-  // DELETE /api/affectations/{employeId}/{phaseId}
-  // Gère la suppression via clé composée
-  delete: async (employeId, phaseId) => {
-    const response = await api.delete(`${BASE_PATH}/${employeId}/${phaseId}`);
+  delete: async (phaseId, employeId) => {
+    console.log(`[affectationService] DELETE /phases/${phaseId}/employes/${employeId}`);
+    const response = await api.delete(`/phases/${phaseId}/employes/${employeId}`);
     return response.data;
   }
 };
