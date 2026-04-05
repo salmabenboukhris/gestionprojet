@@ -1,35 +1,31 @@
 import api from '../api';
 
-const BASE_PATH = '/factures';
-
 export const factureService = {
   // GET /api/factures
-  getAll: async (params) => {
-    const response = await api.get(BASE_PATH, { params });
+  getAll: async () => {
+    console.log(`[factureService] GET /factures`);
+    const response = await api.get(`/factures`);
     return response.data;
   },
   
   // GET /api/factures/{id}
   getById: async (id) => {
-    const response = await api.get(`${BASE_PATH}/${id}`);
+    console.log(`[factureService] GET /factures/${id}`);
+    const response = await api.get(`/factures/${id}`);
     return response.data;
   },
   
-  // POST /api/factures
-  create: async (data) => {
-    const response = await api.post(BASE_PATH, data);
+  // POST /api/phases/{phaseId}/facture
+  create: async (phaseId, data) => {
+    console.log(`[factureService] POST /phases/${phaseId}/facture`, data);
+    const response = await api.post(`/phases/${phaseId}/facture`, data);
     return response.data;
   },
   
   // PUT /api/factures/{id}
   update: async (id, data) => {
-    const response = await api.put(`${BASE_PATH}/${id}`, data);
-    return response.data;
-  },
-  
-  // DELETE /api/factures/{id}
-  delete: async (id) => {
-    const response = await api.delete(`${BASE_PATH}/${id}`);
+    console.log(`[factureService] PUT /factures/${id}`, data);
+    const response = await api.put(`/factures/${id}`, data);
     return response.data;
   }
 };

@@ -1,35 +1,38 @@
 import api from '../api';
 
-const BASE_PATH = '/livrables';
-
 export const livrableService = {
-  // GET /api/livrables
-  getAll: async (params) => {
-    const response = await api.get(BASE_PATH, { params });
+  // GET /api/phases/{phaseId}/livrables
+  getByPhase: async (phaseId) => {
+    console.log(`[livrableService] GET /phases/${phaseId}/livrables`);
+    const response = await api.get(`/phases/${phaseId}/livrables`);
     return response.data;
   },
   
   // GET /api/livrables/{id}
   getById: async (id) => {
-    const response = await api.get(`${BASE_PATH}/${id}`);
+    console.log(`[livrableService] GET /livrables/${id}`);
+    const response = await api.get(`/livrables/${id}`);
     return response.data;
   },
   
-  // POST /api/livrables
-  create: async (data) => {
-    const response = await api.post(BASE_PATH, data);
+  // POST /api/phases/{phaseId}/livrables
+  create: async (phaseId, data) => {
+    console.log(`[livrableService] POST /phases/${phaseId}/livrables`, data);
+    const response = await api.post(`/phases/${phaseId}/livrables`, data);
     return response.data;
   },
   
   // PUT /api/livrables/{id}
   update: async (id, data) => {
-    const response = await api.put(`${BASE_PATH}/${id}`, data);
+    console.log(`[livrableService] PUT /livrables/${id}`, data);
+    const response = await api.put(`/livrables/${id}`, data);
     return response.data;
   },
   
   // DELETE /api/livrables/{id}
   delete: async (id) => {
-    const response = await api.delete(`${BASE_PATH}/${id}`);
+    console.log(`[livrableService] DELETE /livrables/${id}`);
+    const response = await api.delete(`/livrables/${id}`);
     return response.data;
   }
 };
