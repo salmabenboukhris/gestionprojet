@@ -32,4 +32,8 @@ public class PhaseRequestDto {
     @NotNull(message = "Le montant est obligatoire")
     @DecimalMin(value = "0.0", inclusive = false, message = "Le montant doit être positif")
     private BigDecimal montant;
+
+    @Min(value = 0, message = "Le taux doit être >= 0")
+    @Max(value = 100, message = "Le taux doit être <= 100")
+    private Integer tauxRealisation = 0;
 }

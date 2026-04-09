@@ -52,7 +52,7 @@ public class ReportingServiceImpl implements ReportingService {
     @Override
     public TableauDeBordDto getTableauDeBord() {
         List<Projet> projets = projetRepository.findAll();
-        List<Phase> phases = phaseRepository.findAll();
+        List<Phase> phases = phaseRepository.findAllWithProjetAndChef();
 
         long projetsEnCours = projetRepository.findByDateFinGreaterThanEqual(LocalDate.now()).size();
         long projetsClotures = projetRepository.findByDateFinBefore(LocalDate.now()).size();

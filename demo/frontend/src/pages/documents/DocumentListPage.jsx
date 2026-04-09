@@ -79,7 +79,7 @@ const DocumentModal = ({ open, onCancel, onSubmit, projets, confirmLoading, init
       <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
         <Form.Item name="projetId" label="Projet associé" rules={[{ required: true, message: 'Requis' }]}>
           <Select placeholder="Sélectionner un projet" showSearch optionFilterProp="children" style={{ borderRadius: 8 }}>
-            {projets.map(p => <Option key={p.id} value={p.id}>{p.codeProjet || p.id} - {p.libelle || `Projet ${p.id}`}</Option>)}
+            {projets.map(p => <Option key={p.id} value={p.id}>{p.codeProjet || p.code || p.id} — {p.nom || p.libelle || `Projet ${p.id}`}</Option>)}
           </Select>
         </Form.Item>
         <Row gutter={16}>
@@ -210,11 +210,14 @@ const DocumentListPage = () => {
             <FileTextOutlined />
           </div>
           <div>
-            <div style={{ fontWeight: 600, color: '#0f172a' }}>{rec.libelle || rec.nomFichier}</div>
-            <div style={{ fontSize: 12, color: '#94a3b8' }}>{rec.code || 'DOC-'+rec.id}</div>
+            <div style={{ fontWeight: 600, color: '#0f172a' }}>{rec.libelle}</div>
+            <div style={{ fontSize: 12, color: '#94a3b8' }}>
+              {rec.code} {rec.projetNom ? `· ${rec.projetNom}` : ''}
+            </div>
           </div>
         </div>
       )
+
     },
     {
       title: 'Type',
@@ -287,7 +290,7 @@ const DocumentListPage = () => {
                 style={{ width: 350, borderRadius: 8 }}
                 allowClear
               >
-                {projets.map(p => <Option key={p.id} value={p.id}>{p.codeProjet || p.id} - {p.libelle || `Projet ${p.id}`}</Option>)}
+                {projets.map(p => <Option key={p.id} value={p.id}>{p.codeProjet || p.code || p.id} — {p.nom || p.libelle || `Projet ${p.id}`}</Option>)}
               </Select>
             </div>
           </Col>

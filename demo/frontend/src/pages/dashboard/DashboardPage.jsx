@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Row, Col, Card, Table, Tag, Typography, Statistic, Spin, Button,
-  Progress, Empty, Tooltip, Badge
+  Row, Col, Card, Table, Typography, Spin, Button, Empty,
 } from 'antd';
 import {
   ProjectOutlined, CheckCircleOutlined, ClockCircleOutlined,
   EuroCircleOutlined, RiseOutlined, FallOutlined,
   ArrowRightOutlined, BarChartOutlined, TeamOutlined,
 } from '@ant-design/icons';
+import {
+  PieChart, Pie, Cell, Tooltip as ReTooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
+} from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { reportingService } from '../../services/modules/reportingService';
 import { projetService } from '../../services/modules/projetService';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES, ROLES } from '../../utils/constants';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 /* ===================================================
-   KPI Card Component
+   KPI Card
    =================================================== */
-const KpiCard = ({ label, value, prefix, suffix, trend, trendLabel, color = '#1a56db', icon }) => (
+const KpiCard = ({ label, value, suffix, trendLabel, color = '#1a56db', icon }) => (
   <Card hoverable style={{ borderRadius: 12, height: '100%' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
       <div style={{
@@ -30,48 +33,30 @@ const KpiCard = ({ label, value, prefix, suffix, trend, trendLabel, color = '#1a
       }}>
         {icon}
       </div>
-      {trend !== undefined && (
-        <span style={{
-          display: 'inline-flex', alignItems: 'center', gap: 4,
-          fontSize: 12, fontWeight: 600,
-          color: trend >= 0 ? '#10b981' : '#ef4444',
-          background: trend >= 0 ? '#ecfdf5' : '#fef2f2',
-          padding: '2px 8px', borderRadius: 20,
-        }}>
-          {trend >= 0 ? <RiseOutlined /> : <FallOutlined />}
-          {Math.abs(trend)}%
-        </span>
-      )}
     </div>
     <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b', marginBottom: 6 }}>
       {label}
     </div>
     <div style={{ fontSize: 30, fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>
-      {prefix}{value ?? '—'}{suffix}
+      {value ?? '—'}{suffix}
     </div>
     {trendLabel && <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 6 }}>{trendLabel}</div>}
   </Card>
 );
 
 /* ===================================================
-   Project Status Badge
+   Custom Donut Label
    =================================================== */
-const StatusBadge = ({ status }) => {
-  const map = {
-    EN_COURS:  { color: '#f59e0b', bg: '#fffbeb', label: 'En cours' },
-    TERMINE:   { color: '#10b981', bg: '#ecfdf5', label: 'Terminé' },
-    EN_RETARD: { color: '#ef4444', bg: '#fef2f2', label: 'En retard' },
-    CLOTURE:   { color: '#8b5cf6', bg: '#f5f3ff', label: 'Clôturé' },
-    EN_ATTENTE:{ color: '#64748b', bg: '#f1f5f9', label: 'En attente' },
-  };
-  const cfg = map[status] || { color: '#64748b', bg: '#f1f5f9', label: status };
+const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  if (percent < 0.06) return null;
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
   return (
-    <span style={{
-      padding: '3px 10px', borderRadius: 20, fontSize: 12,
-      fontWeight: 600, background: cfg.bg, color: cfg.color,
-    }}>
-      {cfg.label}
-    </span>
+    <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={13} fontWeight={700}>
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
   );
 };
 
@@ -81,37 +66,33 @@ const StatusBadge = ({ status }) => {
 const DashboardPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const userRole = user?.profilCode; // flat field returned by /api/auth/me
+  const userRole = user?.profilCode;
 
-  const isAdmin  = userRole === ROLES.ADMIN;
-  const isDir    = userRole === ROLES.DIRECTEUR;
+  const isAdmin = userRole === ROLES.ADMIN;
+  const isDir   = userRole === ROLES.DIRECTEUR;
 
-  const [tdb, setTdb]             = useState(null);
-  const [projetsEnCours, setProjetsEnCours] = useState([]);
+  const [tdb, setTdb]                         = useState(null);
+  const [projetsEnCours, setProjetsEnCours]   = useState([]);
   const [projetsClotures, setProjetsClotures] = useState([]);
-  const [allProjets, setAllProjets] = useState([]);
-  const [loading, setLoading]     = useState(true);
+  const [allProjets, setAllProjets]           = useState([]);
+  const [loading, setLoading]                 = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        // Always load projects list as fallback KPI source
-        const [projList] = await Promise.allSettled([
-          projetService.getAll({}),
-        ]);
+        const [projList] = await Promise.allSettled([projetService.getAll({})]);
         if (projList.status === 'fulfilled') setAllProjets(projList.value || []);
 
-        // Load reporting data for Admin and Directeur
         if (isAdmin || isDir) {
           const [tdbRes, enCoursRes, closedRes] = await Promise.allSettled([
             reportingService.getTableauDeBord(),
             reportingService.getProjetsEnCours(),
             reportingService.getProjetsClotures(),
           ]);
-          if (tdbRes.status === 'fulfilled') setTdb(tdbRes.value);
+          if (tdbRes.status === 'fulfilled')    setTdb(tdbRes.value);
           if (enCoursRes.status === 'fulfilled') setProjetsEnCours(enCoursRes.value || []);
-          if (closedRes.status === 'fulfilled') setProjetsClotures(closedRes.value || []);
+          if (closedRes.status === 'fulfilled')  setProjetsClotures(closedRes.value || []);
         }
       } catch (_) {}
       finally { setLoading(false); }
@@ -119,78 +100,75 @@ const DashboardPage = () => {
     loadData();
   }, [isAdmin, isDir]);
 
-  /* ---- Derived KPIs (from projects list or tdb) ---- */
-  const totalProjets  = tdb?.totalProjets      ?? allProjets.length;
-  const totalPhases   = tdb?.totalPhases       ?? '—';
-  const montantFacture= tdb?.montantFacture    ?? '—';
-  const montantPaye   = tdb?.montantPaye       ?? '—';
+  /* ---- Derived values ---- */
+  const totalProjets = tdb?.nombreProjets       ?? allProjets.length;
+  const totalPhases  = tdb?.nombrePhases        ?? '—';
+  const montantTotal = tdb?.montantTotalProjets ?? null;
+  const recents      = (projetsEnCours.length ? projetsEnCours : allProjets).slice(0, 8);
 
-  /* ---- Projects table (recent 10) ---- */
-  const recents = (projetsEnCours.length ? projetsEnCours : allProjets).slice(0, 10);
+  /* ---- Charts data ---- */
+  const projetsChartData = [
+    { name: 'En cours', value: tdb?.nombreProjetsEnCours  ?? projetsEnCours.length,  fill: '#f59e0b' },
+    { name: 'Clôturés', value: tdb?.nombreProjetsClotures ?? projetsClotures.length, fill: '#10b981' },
+  ].filter(d => d.value > 0);
 
+  const phasesChartData = [
+    { name: 'Terminées\nnon facturées', value: tdb?.nombrePhasesTermineesNonFacturees ?? 0, fill: '#ef4444' },
+    { name: 'Facturées\nnon payées',    value: tdb?.nombrePhasesFactureesNonPayees    ?? 0, fill: '#f59e0b' },
+    { name: 'Payées',                   value: tdb?.nombrePhasesPayees                ?? 0, fill: '#10b981' },
+  ];
+
+  /* ---- Table columns ---- */
   const projetColumns = [
     {
       title: 'Projet',
-      dataIndex: 'nom',
       key: 'nom',
-      render: (nom, rec) => (
+      render: (_, rec) => (
         <div>
-          <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 2 }}>{nom}</div>
-          <div style={{ fontSize: 12, color: '#94a3b8' }}>{rec.code}</div>
+          <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 2 }}>{rec.nom || rec.projetNom}</div>
+          <div style={{ fontSize: 12, color: '#94a3b8' }}>{rec.code || rec.projetCode}</div>
         </div>
       ),
-    },
-    {
-      title: 'Organisme',
-      dataIndex: ['organisme', 'nom'],
-      key: 'organisme',
-      render: (nom) => <Text type="secondary" style={{ fontSize: 13 }}>{nom || '—'}</Text>,
     },
     {
       title: 'Chef de Projet',
       key: 'chef',
       render: (_, rec) => {
-        const chef = rec.chefProjet;
-        if (!chef) return '—';
+        const nom = rec.chefProjetNomComplet
+          || (rec.chefProjet ? `${rec.chefProjet.prenom || ''} ${rec.chefProjet.nom || ''}`.trim() : null);
+        if (!nom) return <Text type="secondary">—</Text>;
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{
               width: 28, height: 28, borderRadius: '50%', background: '#1a56db',
               color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 11, fontWeight: 700, flexShrink: 0,
+              fontSize: 11, fontWeight: 700,
             }}>
-              {(chef.prenom?.[0] || '') + (chef.nom?.[0] || '')}
+              {nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
             </div>
-            <span style={{ fontSize: 13 }}>{chef.prenom} {chef.nom}</span>
+            <span style={{ fontSize: 13 }}>{nom}</span>
           </div>
         );
       },
     },
     {
-      title: 'Statut',
-      dataIndex: 'statut',
-      key: 'statut',
-      render: (s) => <StatusBadge status={s} />,
-    },
-    {
       title: 'Budget',
-      dataIndex: 'montantGlobal',
-      key: 'montantGlobal',
+      key: 'montant',
       align: 'right',
-      render: (m) => m ? (
-        <span style={{ fontWeight: 600, color: '#0f172a' }}>
-          {Number(m).toLocaleString('fr-FR')} €
-        </span>
-      ) : '—',
+      render: (_, rec) => {
+        const m = rec.montant ?? rec.montantGlobal;
+        return m
+          ? <span style={{ fontWeight: 600, color: '#0f172a' }}>{Number(m).toLocaleString('fr-FR')} MAD</span>
+          : '—';
+      },
     },
     {
       title: '',
       key: 'action',
       width: 40,
-      render: (_, rec) => (
+      render: () => (
         <Button
-          type="text"
-          size="small"
+          type="text" size="small"
           icon={<ArrowRightOutlined />}
           onClick={() => navigate(ROUTES.PROJETS)}
           style={{ color: '#1a56db' }}
@@ -199,19 +177,16 @@ const DashboardPage = () => {
     },
   ];
 
-  /* ---- Render ---- */
-  const firstName = user?.prenom || 'Utilisateur';
-
   return (
     <div>
-      {/* Page Header */}
+      {/* ===== Page Header ===== */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
         <div>
           <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0, color: '#0f172a' }}>
-            Tableau de bord général
+            Tableau de bord
           </h1>
           <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>
-            Bienvenue, {firstName}. Voici l'état actuel de vos projets.
+            Bienvenue, {user?.prenom}. Voici l'état actuel de vos projets.
           </p>
         </div>
         {(isAdmin || isDir) && (
@@ -232,73 +207,138 @@ const DashboardPage = () => {
         </div>
       ) : (
         <>
-          {/* ===== KPI ROW ===== */}
+          {/* ===== KPI Row ===== */}
           <Row gutter={[20, 20]} style={{ marginBottom: 28 }}>
             <Col xs={24} sm={12} xl={6}>
               <KpiCard
-                label="Total Projets"
-                value={totalProjets}
-                icon={<ProjectOutlined />}
-                color="#1a56db"
+                label="Total Projets" value={totalProjets}
+                icon={<ProjectOutlined />} color="#1a56db"
                 trendLabel="Tous les projets enregistrés"
               />
             </Col>
             <Col xs={24} sm={12} xl={6}>
               <KpiCard
                 label="Projets en cours"
-                value={projetsEnCours.length || '—'}
-                icon={<ClockCircleOutlined />}
-                color="#f59e0b"
+                value={tdb?.nombreProjetsEnCours ?? projetsEnCours.length}
+                icon={<ClockCircleOutlined />} color="#f59e0b"
                 trendLabel="Actuellement actifs"
               />
             </Col>
             <Col xs={24} sm={12} xl={6}>
               <KpiCard
                 label="Projets clôturés"
-                value={projetsClotures.length || '—'}
-                icon={<CheckCircleOutlined />}
-                color="#10b981"
+                value={tdb?.nombreProjetsClotures ?? projetsClotures.length}
+                icon={<CheckCircleOutlined />} color="#10b981"
                 trendLabel="Projets terminés"
               />
             </Col>
             <Col xs={24} sm={12} xl={6}>
               <KpiCard
-                label="Total Phases"
-                value={totalPhases}
-                icon={<TeamOutlined />}
-                color="#8b5cf6"
+                label="Total Phases" value={totalPhases}
+                icon={<TeamOutlined />} color="#8b5cf6"
                 trendLabel="Phases de tous les projets"
               />
             </Col>
           </Row>
 
-          {/* ===== Financial KPIs (Admin / Directeur only) ===== */}
-          {(isAdmin || isDir) && (montantFacture !== '—' || montantPaye !== '—') && (
+          {/* ===== Montant + Phases payées (Admin/Directeur) ===== */}
+          {(isAdmin || isDir) && montantTotal !== null && (
             <Row gutter={[20, 20]} style={{ marginBottom: 28 }}>
               <Col xs={24} sm={12}>
                 <KpiCard
-                  label="Montant facturé"
-                  value={montantFacture !== '—' ? Number(montantFacture).toLocaleString('fr-FR') : '—'}
-                  suffix=" €"
-                  icon={<EuroCircleOutlined />}
-                  color="#1a56db"
-                  trendLabel="Cumul des phases facturées"
+                  label="Montant total projets"
+                  value={Number(montantTotal).toLocaleString('fr-FR')}
+                  suffix=" MAD"
+                  icon={<EuroCircleOutlined />} color="#1a56db"
+                  trendLabel="Valeur contractuelle globale"
                 />
               </Col>
               <Col xs={24} sm={12}>
                 <KpiCard
-                  label="Montant payé"
-                  value={montantPaye !== '—' ? Number(montantPaye).toLocaleString('fr-FR') : '—'}
-                  suffix=" €"
-                  icon={<CheckCircleOutlined />}
-                  color="#10b981"
+                  label="Phases payées"
+                  value={tdb?.nombrePhasesPayees ?? '—'}
+                  icon={<CheckCircleOutlined />} color="#10b981"
                   trendLabel="Paiements reçus"
                 />
               </Col>
             </Row>
           )}
 
-          {/* ===== Projects Recent Table ===== */}
+          {/* ===== Charts (Admin / Directeur) ===== */}
+          {(isAdmin || isDir) && tdb && (
+            <Row gutter={[20, 20]} style={{ marginBottom: 28 }}>
+
+              {/* Donut — Répartition projets */}
+              <Col xs={24} md={12}>
+                <Card
+                  title={<span style={{ fontWeight: 700, fontSize: 15 }}>📊 Répartition des projets</span>}
+                  style={{ borderRadius: 12 }}
+                  bodyStyle={{ padding: '8px 16px 16px' }}
+                >
+                  {projetsChartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={240}>
+                      <PieChart>
+                        <Pie
+                          data={projetsChartData}
+                          cx="50%" cy="50%"
+                          innerRadius={60} outerRadius={95}
+                          paddingAngle={3}
+                          dataKey="value"
+                          labelLine={false}
+                          label={renderCustomLabel}
+                        >
+                          {projetsChartData.map((entry, i) => (
+                            <Cell key={i} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <ReTooltip formatter={(val, name) => [`${val} projet(s)`, name]} />
+                        <Legend iconType="circle" iconSize={10} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <Empty description="Aucune donnée" style={{ padding: 40 }} />
+                  )}
+                </Card>
+              </Col>
+
+              {/* Bar — État financier des phases */}
+              <Col xs={24} md={12}>
+                <Card
+                  title={<span style={{ fontWeight: 700, fontSize: 15 }}>📈 État financier des phases</span>}
+                  style={{ borderRadius: 12 }}
+                  bodyStyle={{ padding: '8px 16px 16px' }}
+                >
+                  <ResponsiveContainer width="100%" height={240}>
+                    <BarChart data={phasesChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis
+                        dataKey="name"
+                        tick={{ fontSize: 10, fill: '#64748b' }}
+                        axisLine={false} tickLine={false}
+                      />
+                      <YAxis
+                        allowDecimals={false}
+                        tick={{ fontSize: 11, fill: '#64748b' }}
+                        axisLine={false} tickLine={false}
+                      />
+                      <ReTooltip
+                        formatter={(val) => [`${val} phase(s)`]}
+                        contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 13 }}
+                      />
+                      <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                        {phasesChartData.map((entry, i) => (
+                          <Cell key={i} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Card>
+              </Col>
+
+            </Row>
+          )}
+
+          {/* ===== Projets récents table ===== */}
           <Card
             style={{ borderRadius: 12, marginBottom: 24 }}
             title={
@@ -326,10 +366,9 @@ const DashboardPage = () => {
               <Table
                 dataSource={recents}
                 columns={projetColumns}
-                rowKey="id"
-                pagination={false}
+                rowKey={(r) => r.id ?? r.projetId}
+                pagination={{ pageSize: 5, showSizeChanger: false, showTotal: (t) => `${t} projets` }}
                 size="middle"
-                style={{ borderRadius: 0 }}
               />
             )}
           </Card>
@@ -337,11 +376,7 @@ const DashboardPage = () => {
           {/* ===== Quick Actions ===== */}
           <Row gutter={[20, 20]}>
             <Col xs={24} md={8}>
-              <Card
-                hoverable
-                style={{ borderRadius: 12, cursor: 'pointer', textAlign: 'center' }}
-                onClick={() => navigate(ROUTES.PROJETS)}
-              >
+              <Card hoverable style={{ borderRadius: 12, textAlign: 'center' }} onClick={() => navigate(ROUTES.PROJETS)}>
                 <ProjectOutlined style={{ fontSize: 32, color: '#1a56db', marginBottom: 12 }} />
                 <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Gérer les Projets</div>
                 <div style={{ color: '#64748b', fontSize: 13 }}>Créer, modifier et suivre vos projets</div>
@@ -349,24 +384,16 @@ const DashboardPage = () => {
             </Col>
             {(isAdmin || isDir) && (
               <Col xs={24} md={8}>
-                <Card
-                  hoverable
-                  style={{ borderRadius: 12, cursor: 'pointer', textAlign: 'center' }}
-                  onClick={() => navigate(ROUTES.REPORTING)}
-                >
+                <Card hoverable style={{ borderRadius: 12, textAlign: 'center' }} onClick={() => navigate(ROUTES.REPORTING)}>
                   <BarChartOutlined style={{ fontSize: 32, color: '#8b5cf6', marginBottom: 12 }} />
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Reporting</div>
                   <div style={{ color: '#64748b', fontSize: 13 }}>Phases, facturation, paiements</div>
                 </Card>
               </Col>
             )}
-            {(isAdmin) && (
+            {isAdmin && (
               <Col xs={24} md={8}>
-                <Card
-                  hoverable
-                  style={{ borderRadius: 12, cursor: 'pointer', textAlign: 'center' }}
-                  onClick={() => navigate(ROUTES.EMPLOYES)}
-                >
+                <Card hoverable style={{ borderRadius: 12, textAlign: 'center' }} onClick={() => navigate(ROUTES.EMPLOYES)}>
                   <TeamOutlined style={{ fontSize: 32, color: '#10b981', marginBottom: 12 }} />
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Employés</div>
                   <div style={{ color: '#64748b', fontSize: 13 }}>Gérer les membres de l'équipe</div>

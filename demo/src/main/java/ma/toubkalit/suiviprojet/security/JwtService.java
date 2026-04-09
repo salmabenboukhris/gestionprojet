@@ -2,6 +2,7 @@ package ma.toubkalit.suiviprojet.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -10,7 +11,11 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "my-secret-key-my-secret-key-my-secret-key";
+    @Value("${jwt.secret}")
+    private String SECRET;
+
+    @Value("${jwt.expiration}")
+    private long EXPIRATION_MS;
 
     private Key getKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
@@ -20,7 +25,7 @@ public class JwtService {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -42,4 +47,4 @@ public class JwtService {
             return false;
         }
     }
-}
+}

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card, Table, Button, Space, Modal, Form, Input, Select, Tooltip, message, Popconfirm, Row, Col, Typography, Empty
+  Card, Table, Button, Space, Modal, Form, Input, Select, Upload,
+  Tooltip, message, Popconfirm, Row, Col, Typography, Empty
 } from 'antd';
 import {
-  PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined
+  PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined,
+  SearchOutlined, UploadOutlined, PaperClipOutlined
 } from '@ant-design/icons';
 import { livrableService } from '../../services/modules/livrableService';
 import { phaseService } from '../../services/modules/phaseService';
@@ -37,8 +39,11 @@ const StatusBadge = ({ status }) => {
 const LivrableModal = ({ open, onCancel, onSubmit, livrable, phases, confirmLoading, initialPhaseId }) => {
   const [form] = Form.useForm();
 
+  const [fileList, setFileList] = useState([]);
+
   useEffect(() => {
     if (open) {
+      setFileList([]);
       if (livrable) {
         form.setFieldsValue({
           code: livrable.code,
@@ -54,9 +59,19 @@ const LivrableModal = ({ open, onCancel, onSubmit, livrable, phases, confirmLoad
     }
   }, [open, livrable, form, initialPhaseId]);
 
+  const beforeUpload = (file) => {
+    const limit = 10 * 1024 * 1024; // 10MB
+    if (file.size > limit) {
+      message.error('Fichier trop volumineux (max 10 Mo)');
+      return Upload.LIST_IGNORE;
+    }
+    setFileList([file]);
+    return false; // prevent auto-upload
+  };
+
   const handleOk = () => {
     form.validateFields().then(values => {
-      onSubmit(values);
+      onSubmit({ ...values, file: fileList[0] || null });
     });
   };
 
@@ -87,7 +102,7 @@ const LivrableModal = ({ open, onCancel, onSubmit, livrable, phases, confirmLoad
           </Col>
         </Row>
         <Form.Item name="description" label="Description">
-          <Input.TextArea rows={3} placeholder="Description..." style={{ borderRadius: 8 }} />
+          <Input.TextArea rows={2} placeholder="Description..." style={{ borderRadius: 8 }} />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
@@ -108,6 +123,22 @@ const LivrableModal = ({ open, onCancel, onSubmit, livrable, phases, confirmLoad
             </Form.Item>
           </Col>
         </Row>
+        {/* File upload (optional) */}
+        <Form.Item label={<span><PaperClipOutlined style={{ marginRight: 6 }} />Fichier livrable <span style={{ color: '#94a3b8', fontSize: 12 }}>(optionnel — max 10 Mo)</span></span>}>
+          <Upload
+            beforeUpload={beforeUpload}
+            onRemove={() => setFileList([])}
+            fileList={fileList.map(f => ({ uid: '-1', name: f.name, status: 'done' }))}
+            maxCount={1}
+          >
+            <Button icon={<UploadOutlined />} style={{ borderRadius: 8 }}>Choisir un fichier</Button>
+          </Upload>
+          {fileList[0] && (
+            <div style={{ marginTop: 6, fontSize: 12, color: '#64748b' }}>
+              📎 {fileList[0].name} ({(fileList[0].size / 1024).toFixed(0)} Ko)
+            </div>
+          )}
+        </Form.Item>
       </Form>
     </Modal>
   );

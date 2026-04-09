@@ -4,6 +4,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils/constants';
+import { loginSchema, yupSync } from '../../utils/validations';
 
 const { Title, Text } = Typography;
 
@@ -65,11 +66,11 @@ const LoginPage = () => {
         <Form.Item
           label={<span style={{ fontWeight: 500, color: '#0f172a' }}>Identifiant</span>}
           name="login"
-          rules={[{ required: true, message: 'Veuillez saisir votre identifiant' }]}
+          rules={[yupSync(loginSchema, 'login')]}
         >
           <Input
             prefix={<UserOutlined style={{ color: '#94a3b8' }} />}
-            placeholder="Votre login"
+            placeholder="Votre login (min 3 caractères)"
             style={{ borderRadius: 8 }}
           />
         </Form.Item>
@@ -77,11 +78,11 @@ const LoginPage = () => {
         <Form.Item
           label={<span style={{ fontWeight: 500, color: '#0f172a' }}>Mot de passe</span>}
           name="password"
-          rules={[{ required: true, message: 'Veuillez saisir votre mot de passe' }]}
+          rules={[yupSync(loginSchema, 'password')]}
         >
           <Input.Password
             prefix={<LockOutlined style={{ color: '#94a3b8' }} />}
-            placeholder="Votre mot de passe"
+            placeholder="Votre mot de passe (min 4 caractères)"
             style={{ borderRadius: 8 }}
           />
         </Form.Item>
@@ -102,7 +103,7 @@ const LoginPage = () => {
               boxShadow: '0 4px 12px rgba(26,86,219,0.3)',
             }}
           >
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? 'Connexion en cours...' : 'Se connecter'}
           </Button>
         </Form.Item>
       </Form>

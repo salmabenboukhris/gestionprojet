@@ -90,6 +90,7 @@ const PhaseModal = ({ open, onCancel, onSubmit, phase, projets, confirmLoading }
         dateDebut:       values.dateDebut?.format('YYYY-MM-DD'),
         dateFin:         values.dateFin?.format('YYYY-MM-DD'),
         montant:         values.montant,
+        tauxRealisation: values.tauxRealisation ?? 0,
       });
     });
   };
@@ -143,9 +144,14 @@ const PhaseModal = ({ open, onCancel, onSubmit, phase, projets, confirmLoading }
         </Row>
 
         <Row gutter={16}>
-          <Col span={24}>
+          <Col span={18}>
             <Form.Item name="montant" label="Montant (€)" rules={[{ required: true, message: 'Requis' }]}>
               <InputNumber min={0} style={{ width: '100%', borderRadius: 8 }} formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} placeholder="0" />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item name="tauxRealisation" label="Taux %">
+              <InputNumber min={0} max={100} style={{ width: '100%', borderRadius: 8 }} formatter={v => `${v}%`} parser={v => v.replace('%', '')} placeholder="0" />
             </Form.Item>
           </Col>
         </Row>
@@ -190,7 +196,9 @@ const PhaseListPage = () => {
       const params = {};
       if (filterProjet) params.projetId = filterProjet;
       const data = await phaseService.getAll(params);
-      setPhases(Array.isArray(data) ? data : []);
+      // LIFO — les plus récents en premier
+      const sorted = Array.isArray(data) ? [...data].sort((a, b) => b.id - a.id) : [];
+      setPhases(sorted);
     } catch (err) {
       message.error('Erreur lors du chargement des phases : ' + (err.response?.data?.message || err.message));
     }

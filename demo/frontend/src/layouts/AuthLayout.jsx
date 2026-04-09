@@ -33,7 +33,9 @@ const AuthLayout = () => {
       }} />
 
       {/* Left branding panel (desktop only) */}
-      <div style={{
+      <div 
+        className="auth-branding"
+        style={{
         display: 'none',
         flex: 1,
         alignItems: 'center',
@@ -42,9 +44,7 @@ const AuthLayout = () => {
         color: '#fff',
         flexDirection: 'column',
         gap: 24,
-        // Show on desktop
-        '@media (min-width: 1024px)': { display: 'flex' },
-      }} className="auth-branding">
+      }} >
         <div>
           <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px', marginBottom: 6 }}>
             Project Manager

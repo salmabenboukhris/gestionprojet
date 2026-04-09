@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Card, Table, Tabs, Tag, Typography, Select, Button,
-  Space, Statistic, Row, Col, Input, Empty, Spin
+  Card, Table, Tabs, Typography, Select, Button,
+  Space, Row, Col, Empty, Spin
 } from 'antd';
 import {
-  SearchOutlined, DownloadOutlined, EuroCircleOutlined,
-  CheckCircleOutlined, ClockCircleOutlined, ProjectOutlined,
-  FilterOutlined,
+  EuroCircleOutlined, CheckCircleOutlined, ClockCircleOutlined,
+  ProjectOutlined,
 } from '@ant-design/icons';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip as ReTooltip, ResponsiveContainer, Cell, Legend,
+  AreaChart, Area,
+} from 'recharts';
 import { reportingService } from '../../services/modules/reportingService';
 import { projetService } from '../../services/modules/projetService';
-import { employeService } from '../../services/modules/employeService';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -320,32 +323,94 @@ const ReportingPage = () => {
       {/* Summary KPI Row */}
       <Row gutter={[20, 20]} style={{ marginBottom: 28 }}>
         <Col xs={24} md={8}>
-          <SummaryKpi
-            label="À facturer"
-            value={fmtEur(totalTNF)}
-            color="#f59e0b"
-            icon={<ClockCircleOutlined />}
-          />
+          <SummaryKpi label="À facturer" value={fmtEur(totalTNF)} color="#f59e0b" icon={<ClockCircleOutlined />} />
         </Col>
         <Col xs={24} md={8}>
-          <SummaryKpi
-            label="Facturé non payé"
-            value={fmtEur(totalFNP)}
-            color="#3b82f6"
-            icon={<EuroCircleOutlined />}
-          />
+          <SummaryKpi label="Facturé non payé" value={fmtEur(totalFNP)} color="#3b82f6" icon={<EuroCircleOutlined />} />
         </Col>
         <Col xs={24} md={8}>
-          <SummaryKpi
-            label="Encaissé"
-            value={fmtEur(totalPay)}
-            color="#10b981"
-            icon={<CheckCircleOutlined />}
-          />
+          <SummaryKpi label="Encaissé" value={fmtEur(totalPay)} color="#10b981" icon={<CheckCircleOutlined />} />
         </Col>
       </Row>
 
-      {/* Tabbed Tables */}
+      {/* ===== Charts Section ===== */}
+      {(totalTNF > 0 || totalFNP > 0 || totalPay > 0) && (
+        <Row gutter={[20, 20]} style={{ marginBottom: 28 }}>
+          {/* Bar Chart — Montants financiers */}
+          <Col xs={24} md={12}>
+            <Card
+              title={<span style={{ fontWeight: 700, fontSize: 15 }}>💰 Analyse financière des phases</span>}
+              style={{ borderRadius: 12 }}
+              bodyStyle={{ padding: '8px 16px 16px' }}
+            >
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart
+                  data={[
+                    { name: 'À facturer',       value: totalTNF,  fill: '#f59e0b' },
+                    { name: 'Facturé non payé', value: totalFNP,  fill: '#3b82f6' },
+                    { name: 'Encaissé',         value: totalPay,  fill: '#10b981' },
+                  ]}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false}
+                    tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}
+                  />
+                  <ReTooltip
+                    formatter={(val) => [`${Number(val).toLocaleString('fr-FR')} MAD`]}
+                    contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 12 }}
+                  />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                    {[
+                      { fill: '#f59e0b' }, { fill: '#3b82f6' }, { fill: '#10b981' },
+                    ].map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </Col>
+
+          {/* Bar Chart — Nombre de phases par état */}
+          <Col xs={24} md={12}>
+            <Card
+              title={<span style={{ fontWeight: 700, fontSize: 15 }}>📊 Phases par état</span>}
+              style={{ borderRadius: 12 }}
+              bodyStyle={{ padding: '8px 16px 16px' }}
+            >
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart
+                  layout="vertical"
+                  data={[
+                    { name: 'Terminées\nnon facturées', value: phasesTerminees.length, fill: '#f59e0b' },
+                    { name: 'Facturées\nnon payées',    value: phasesFacturees.length, fill: '#3b82f6' },
+                    { name: 'Payées',                  value: phasesPayees.length,    fill: '#10b981' },
+                  ]}
+                  margin={{ top: 5, right: 20, left: 30, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                  <XAxis type="number" allowDecimals={false}
+                    tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false}
+                  />
+                  <YAxis type="category" dataKey="name"
+                    tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} width={90}
+                  />
+                  <ReTooltip
+                    formatter={(val) => [`${val} phase(s)`]}
+                    contentStyle={{ borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 12 }}
+                  />
+                  <Bar dataKey="value" radius={[0, 6, 6, 0]}>
+                    {[
+                      { fill: '#f59e0b' }, { fill: '#3b82f6' }, { fill: '#10b981' },
+                    ].map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </Col>
+        </Row>
+      )}
+
       <Card style={{ borderRadius: 12 }} bodyStyle={{ padding: '8px 0 0' }}>
         <Tabs
           activeKey={activeTab}

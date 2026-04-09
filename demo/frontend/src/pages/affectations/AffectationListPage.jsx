@@ -159,25 +159,31 @@ const AffectationListPage = () => {
     {
       title: 'Employé',
       key: 'employe',
-      render: (_, rec) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#7c3aed', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
-            {rec.employeNom?.[0]}{rec.employePrenom?.[0] || 'E'}
+      render: (_, rec) => {
+        const nom = rec.employeNomComplet ||
+          [rec.employePrenom, rec.employeNom].filter(Boolean).join(' ') ||
+          `Employé ${rec.employeId}`;
+        const initials = nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#7c3aed', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+              {initials}
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, color: '#0f172a' }}>{nom}</div>
+              <div style={{ fontSize: 12, color: '#94a3b8' }}>Matricule: {rec.employeMatricule || '—'}</div>
+            </div>
           </div>
-          <div>
-            <div style={{ fontWeight: 600, color: '#0f172a' }}>{rec.employePrenom} {rec.employeNom}</div>
-            <div style={{ fontSize: 12, color: '#94a3b8' }}>Matricule: {rec.employeMatricule || '—'}</div>
-          </div>
-        </div>
-      )
+        );
+      }
     },
     {
       title: 'Phase',
       key: 'phase',
       render: (_, rec) => (
         <div>
-          <div style={{ fontWeight: 600, color: '#1e40af' }}>Phase {rec.phaseId}</div>
-          <div style={{ fontSize: 12, color: '#64748b' }}>Affecté sur cette phase</div>
+          <div style={{ fontWeight: 600, color: '#1e40af' }}>{rec.phaseCode || `Phase ${rec.phaseId}`}</div>
+          <div style={{ fontSize: 12, color: '#64748b' }}>{rec.phaseLibelle || 'Affecté sur cette phase'}</div>
         </div>
       )
     },

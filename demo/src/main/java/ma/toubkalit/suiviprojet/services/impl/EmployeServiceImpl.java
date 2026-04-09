@@ -6,6 +6,7 @@ import ma.toubkalit.suiviprojet.dto.employe.EmployeSearchResponseDto;
 import ma.toubkalit.suiviprojet.entities.Employe;
 import ma.toubkalit.suiviprojet.entities.Profil;
 import ma.toubkalit.suiviprojet.exceptions.DuplicateResourceException;
+import ma.toubkalit.suiviprojet.exceptions.OperationNotAllowedException;
 import ma.toubkalit.suiviprojet.exceptions.ResourceNotFoundException;
 import ma.toubkalit.suiviprojet.mappers.EmployeMapper;
 import ma.toubkalit.suiviprojet.repositories.AffectationRepository;
@@ -108,6 +109,18 @@ public class EmployeServiceImpl implements EmployeService {
         Employe employe = employeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employé introuvable avec l'id : " + id));
 
+        if (!employe.getProjetsDiriges().isEmpty()) {
+            throw new OperationNotAllowedException(
+                    "Impossible de supprimer cet employé car il est chef de " +
+                    employe.getProjetsDiriges().size() + " projet(s). Réaffectez ces projets d'abord.");
+        }
+
+        if (!employe.getAffectations().isEmpty()) {
+            throw new OperationNotAllowedException(
+                    "Impossible de supprimer cet employé car il a " +
+                    employe.getAffectations().size() + " affectation(s) active(s).");
+        }
+
         employeRepository.delete(employe);
     }
 
@@ -138,7 +151,7 @@ public class EmployeServiceImpl implements EmployeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Employé introuvable avec le login : " + login));
 
         if (!passwordEncoder.matches(oldPassword, employe.getPassword())) {
-            throw new ma.toubkalit.suiviprojet.exceptions.OperationNotAllowedException("Ancien mot de passe incorrect");
+            throw new OperationNotAllowedException("Ancien mot de passe incorrect");
         }
 
         employe.setPassword(passwordEncoder.encode(newPassword));

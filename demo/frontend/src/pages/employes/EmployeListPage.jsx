@@ -11,6 +11,7 @@ import {
 import { employeService } from '../../services/modules/employeService';
 import { useAuth } from '../../hooks/useAuth';
 import { ROLES } from '../../utils/constants';
+import { employeSchema, yupSync } from '../../utils/validations';
 
 const { Option } = Select;
 
@@ -66,12 +67,12 @@ const EmployeModal = ({ open, onCancel, onSubmit, employe, confirmLoading }) => 
       <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="matricule" label="Matricule" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="matricule" label="Matricule" rules={[yupSync(employeSchema, 'matricule')]}>
               <Input prefix={<IdcardOutlined style={{ color: '#94a3b8' }} />} placeholder="EMP-001" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="profilId" label="Rôle / Profil" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="profilId" label="Rôle / Profil" rules={[yupSync(employeSchema, 'profilId')]}>
               <Select placeholder="Sélectionner un rôle">
                 {PROFILS.map(p => <Option key={p.id} value={p.id}>{p.label}</Option>)}
               </Select>
@@ -80,28 +81,30 @@ const EmployeModal = ({ open, onCancel, onSubmit, employe, confirmLoading }) => 
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="nom" label="Nom" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="nom" label="Nom" rules={[yupSync(employeSchema, 'nom')]}>
               <Input placeholder="Nom" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="prenom" label="Prénom" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="prenom" label="Prénom" rules={[yupSync(employeSchema, 'prenom')]}>
               <Input placeholder="Prénom" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Requis', type: 'email' }]}>
+        <Form.Item name="email" label="Email" rules={[yupSync(employeSchema, 'email')]}>
           <Input prefix={<MailOutlined style={{ color: '#94a3b8' }} />} placeholder="email@exemple.com" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="login" label="Login" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="login" label="Login" rules={[yupSync(employeSchema, 'login')]}>
               <Input prefix={<UserOutlined style={{ color: '#94a3b8' }} />} placeholder="login" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="password" label={employe ? "Nouveau Mot de Passe *" : "Mot de Passe"} rules={[{ required: true, message: 'Requis' }]}>
-              <Input.Password placeholder="******" style={{ borderRadius: 8 }} />
+            <Form.Item name="password" label={employe ? 'Nouveau Mot de Passe' : 'Mot de Passe'}
+              rules={[yupSync(employeSchema, 'password')]}
+            >
+              <Input.Password placeholder="Min 6 caractères" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
         </Row>
@@ -138,7 +141,7 @@ const EmployeListPage = () => {
       
       // FIX: Call getAll(params) because search(params) doesn't exist in service
       const data = await employeService.getAll(params);
-      setEmployes(Array.isArray(data) ? data : []);
+      setEmployes((Array.isArray(data) ? [...data] : []).sort((a, b) => b.id - a.id));
     } catch (_) { 
       message.error('Erreur lors du chargement des employés'); 
     } finally { 

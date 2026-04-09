@@ -43,6 +43,13 @@ public class PhaseServiceImpl implements PhaseService {
     }
 
     @Override
+    public List<PhaseResponseDto> getAll() {
+        return phaseRepository.findAllWithProjetAndChef().stream()
+                .map(phaseMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
     public List<PhaseResponseDto> getByProjetId(Long projetId) {
         projetRepository.findById(projetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable avec l'id : " + projetId));

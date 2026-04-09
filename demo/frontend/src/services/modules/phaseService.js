@@ -20,22 +20,16 @@ export const phaseService = {
     return response.data;
   },
 
-  /** GET all phases across all projects (fetches each project's phases) */
+  /** GET all phases across all projects — uses new single endpoint */
   getAll: async (params = {}) => {
-    // If projetId given, fetch for that project directly
+    // If projetId given, fetch for that specific project
     if (params.projetId) {
       const response = await api.get(`/projets/${params.projetId}/phases`);
       return response.data;
     }
-    // Otherwise, fetch all projects then their phases
-    const projetsRes = await api.get('/projets');
-    const projets = projetsRes.data || [];
-    const allPhases = await Promise.all(
-      projets.map(p =>
-        api.get(`/projets/${p.id}/phases`).then(r => r.data || []).catch(() => [])
-      )
-    );
-    return allPhases.flat();
+    // Otherwise use the efficient GET /api/phases endpoint (no N+1)
+    const response = await api.get('/phases');
+    return response.data;
   },
 
   /** GET /api/phases/{id} */

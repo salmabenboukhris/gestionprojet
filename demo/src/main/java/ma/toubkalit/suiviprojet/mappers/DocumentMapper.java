@@ -34,6 +34,9 @@ public class DocumentMapper {
                 .libelle(document.getLibelle())
                 .description(document.getDescription())
                 .chemin(document.getChemin())
+                .typeFichier(document.getTypeFichier())
+                .taille(document.getTaille())
+                .dateUpload(document.getDateUpload())
                 .projetId(document.getProjet() != null ? document.getProjet().getId() : null)
                 .projetCode(document.getProjet() != null ? document.getProjet().getCode() : null)
                 .projetNom(document.getProjet() != null ? document.getProjet().getNom() : null)
@@ -46,7 +49,7 @@ public class DocumentMapper {
                 .code(document.getCode())
                 .libelle(document.getLibelle())
                 .chemin(document.getChemin())
-                .message("Téléchargement simulé : utiliser le chemin fourni")
+                .message("Téléchargement du fichier")
                 .build();
     }
 }

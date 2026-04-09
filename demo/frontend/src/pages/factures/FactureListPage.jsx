@@ -3,7 +3,7 @@ import {
   Card, Table, Button, Space, Modal, Form, Select, DatePicker, InputNumber, Input, Tooltip, message, Popconfirm, Row, Col, Typography, Tag
 } from 'antd';
 import {
-  PlusOutlined, EditOutlined, FileTextOutlined, SearchOutlined, EuroOutlined
+  PlusOutlined, EditOutlined, DeleteOutlined, FileTextOutlined, SearchOutlined, EuroOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { factureService } from '../../services/modules/factureService';
@@ -162,6 +162,8 @@ const FactureListPage = () => {
         list = list.filter(f => f.statut === filterStatut);
       }
       
+      // LIFO — les plus récentes en premier
+      list = [...list].sort((a, b) => b.id - a.id);
       setFactures(list);
     } catch (err) { 
         console.error(err);
@@ -192,6 +194,16 @@ const FactureListPage = () => {
       console.error(err);
       message.error(err.response?.data?.message || 'Erreur lors de la sauvegarde');
     } finally { setSubmitting(false); }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await factureService.delete(id);
+      message.success('Facture supprimée');
+      fetchFactures();
+    } catch (err) {
+      message.error(err.response?.data?.message || 'Erreur lors de la suppression');
+    }
   };
 
   const totalsByStatus = factures.reduce((acc, f) => {
@@ -247,6 +259,18 @@ const FactureListPage = () => {
             <Tooltip title="Modifier">
               <Button type="text" size="small" icon={<EditOutlined style={{ color: '#f59e0b' }} />} onClick={() => { setSelectedFacture(rec); setModalOpen(true); }} />
             </Tooltip>
+          )}
+          {canEdit && (
+            <Popconfirm
+              title="Supprimer cette facture ?"
+              description="Cette action est irréversible."
+              onConfirm={() => handleDelete(rec.id)}
+              okText="Supprimer"
+              cancelText="Annuler"
+              okButtonProps={{ danger: true }}
+            >
+              <Button type="text" size="small" danger icon={<DeleteOutlined />} />
+            </Popconfirm>
           )}
         </Space>
       )

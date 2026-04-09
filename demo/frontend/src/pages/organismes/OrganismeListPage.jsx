@@ -12,6 +12,7 @@ import {
 import { organismeService } from '../../services/modules/organismeService';
 import { useAuth } from '../../hooks/useAuth';
 import { ROLES } from '../../utils/constants';
+import { organismeSchema, yupSync } from '../../utils/validations';
 
 /* ===================================================
    Organisme Form Modal
@@ -47,27 +48,27 @@ const OrganismeModal = ({ open, onCancel, onSubmit, organisme, confirmLoading })
       <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item name="code" label="Code" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="code" label="Code" rules={[yupSync(organismeSchema, 'code')]}>
               <Input placeholder="ORG-001" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
           <Col span={16}>
-            <Form.Item name="nom" label="Nom de l'organisme" rules={[{ required: true, message: 'Requis' }]}>
+            <Form.Item name="nom" label="Nom de l'organisme" rules={[yupSync(organismeSchema, 'nom')]}>
               <Input placeholder="Nom complet" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="nomContact" label="Nom du contact">
+        <Form.Item name="nomContact" label="Nom du contact" rules={[yupSync(organismeSchema, 'nomContact')]}>
           <Input prefix={<UserOutlined style={{ color: '#94a3b8' }} />} placeholder="Responsable" style={{ borderRadius: 8 }} />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="emailContact" label="Email de contact" rules={[{ type: 'email', message: 'Email invalide' }]}>
+            <Form.Item name="emailContact" label="Email de contact" rules={[yupSync(organismeSchema, 'emailContact')]}>
               <Input prefix={<MailOutlined style={{ color: '#94a3b8' }} />} placeholder="contact@exemple.com" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="telephone" label="Téléphone">
+            <Form.Item name="telephone" label="Téléphone" rules={[yupSync(organismeSchema, 'telephone')]}>
               <Input prefix={<PhoneOutlined style={{ color: '#94a3b8' }} />} placeholder="05XXXXXXXX" style={{ borderRadius: 8 }} />
             </Form.Item>
           </Col>
@@ -99,7 +100,7 @@ const OrganismeListPage = () => {
       const params = {};
       if (search) params.nom = search;
       const data = await organismeService.getAll(params);
-      setOrganismes(Array.isArray(data) ? data : []);
+      setOrganismes((Array.isArray(data) ? [...data] : []).sort((a, b) => b.id - a.id));
     } catch (_) { 
       message.error('Erreur lors du chargement des organismes'); 
     } finally { 

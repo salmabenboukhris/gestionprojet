@@ -14,17 +14,13 @@ export const documentService = {
   },
   
   create: async (projetId, formData) => {
-    // Log du contenu du FormData pour le débogage (les Files ne s'affichent pas en direct dans un log normal)
-    const formDataEntries = {};
-    formData.forEach((value, key) => { formDataEntries[key] = value instanceof File ? `File(${value.name})` : value; });
-    
-    console.log(`[documentService] POST /projets/${projetId}/documents | Payload:`, formDataEntries);
-    
-    // Axios avec FormData calcule automatiquement le boundary requis.
-    // NE PAS définir le header 'Content-Type': 'multipart/form-data', c'est la source de l'erreur dans Axios.
-    const response = await api.post(`/projets/${projetId}/documents`, formData);
+    // ✅ Endpoint multipart correct : /documents/upload
+    const response = await api.post(`/projets/${projetId}/documents/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   },
+
   
   delete: async (id) => {
     console.log(`[documentService] DELETE /documents/${id}`);
