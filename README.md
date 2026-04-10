@@ -1,5 +1,18 @@
+# 📊 Suivi Projet
 
-# Suivi Projet
+> *Application web de gestion et de suivi de projets*
+
+![Version](https://img.shields.io/badge/VERSION-1.0-blue?style=for-the-badge&logo=github)
+![Status](https://img.shields.io/badge/STATUS-PRODUCTION-brightgreen?style=for-the-badge)
+![License](https://img.shields.io/badge/LICENSE-MIT-orange?style=for-the-badge)
+
+## 🛠️ Technologies utilisées
+
+![Java](https://img.shields.io/badge/Java_17-red?style=flat-square&logo=java)
+![Spring_Boot_3.x](https://img.shields.io/badge/Spring_Boot_3.x-brightgreen?style=flat-square&logo=springboot)
+![React_18](https://img.shields.io/badge/React_18-blue?style=flat-square&logo=react)
+![MySQL_8](https://img.shields.io/badge/MySQL_8-orange?style=flat-square&logo=mysql)
+![Docker_✓](https://img.shields.io/badge/Docker_✓-blue?style=flat-square&logo=docker)
 
 ## Description
 
