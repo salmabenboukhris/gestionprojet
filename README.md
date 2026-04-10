@@ -43,17 +43,12 @@ La problématique adressée est la suivante : comment assurer un suivi rigoureux
 - Gestion centralisée des exceptions (`GlobalExceptionHandler`)
 - Documentation auto-générée via Swagger / OpenAPI 3
 
-![WhatsApp Image 2026-04-10 at 1 20 03 AM](https://github.com/user-attachments/assets/afcb357e-04dc-4c48-8cdc-45e1b49f98a0)
-
 ### Frontend (React + Vite) — *Architecture frontend React · Intégration frontend backend*
 - Interface SPA (Single Page Application) servie par Nginx sur le port **3000**
 - Routing côté client géré par React Router
 - Appels API centralisés via Axios avec intercepteurs JWT
 - Proxy Nginx (`/api/*` → `backend:8082`) assurant l'intégration frontend ↔ backend sans CORS
 - Contrôle d'accès aux routes selon le rôle de l'utilisateur connecté
-
-![WhatsApp Image 2026-04-10 at 1 18 53 AM](https://github.com/user-attachments/assets/92ac81e1-d916-4cd2-95e2-6a26c54e4100)
-
 
 ### Base de données — *Modélisation JPA et base de données*
 - MySQL 8.0 avec schéma auto-géré par Hibernate (`ddl-auto: update`)
@@ -314,6 +309,7 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 
 ## Conteneurisation — *Conteneurisation*
 
+
 - **Dockerfile backend** : Build multi-stage Maven → JRE 17 Alpine. Le JAR est compilé sans les tests puis copié dans une image légère avec un utilisateur non-root.
 - **Dockerfile frontend** : Build multi-stage Node 18 → Nginx Alpine. Vite génère le dossier `dist/` qui est servi statiquement par Nginx.
 - **docker-compose.yml** : Orchestre les 3 services (`db`, `backend`, `frontend`) sur un réseau interne partagé. Le backend attend que MySQL soit sain via `healthcheck` avant de démarrer. Les variables d'environnement surchargent `application.properties` sans modifier le code source.
@@ -323,9 +319,9 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 ---
 
 ## Auteurs
-.BENBOUKHRIS SALMA 
-.BAJADDA Asma 
-.AIT MAZOUZ IKRAM
+**BENBOUKHRIS SALMA**
+**BAJADDA Asma** 
+**AIT MAZOUZ IKRAM**
  
 
 ---
