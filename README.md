@@ -1,3 +1,4 @@
+
 # Suivi Projet
 
 ## Description
@@ -257,6 +258,9 @@ npm run dev
 
 
 
+https://github.com/user-attachments/assets/8d97c077-fcaa-4af2-987a-b0a3f5378946
+
+
 ---
 
 ## API Documentation (Swagger) — *Swagger / OpenAPI*
@@ -306,11 +310,9 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 ---
 
 ## Auteurs
-
-
-
-- Nom 1 : BAJADDA Asma 
-- Nom 2 : AIT MAZOUZ IKRAM
-- Nom 3 : Prénom NOM 
+.BENBOUKHRIS SALMA 
+.BAJADDA Asma 
+.AIT MAZOUZ IKRAM
+ 
 
 ---
