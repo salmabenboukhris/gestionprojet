@@ -66,32 +66,8 @@ La problématique adressée est la suivante : comment assurer un suivi rigoureux
 
 ## Schéma de l'architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Docker Network                        │
-│                                                         │
-│  ┌──────────────┐    /api/*     ┌──────────────────┐    │
-│  │   Frontend   │─────proxy────▶│    Backend       │    │
-│  │  React/Vite  │               │  Spring Boot     │    │
-│  │  Nginx :80   │               │  Port 8082       │    │
-│  └──────────────┘               └────────┬─────────┘    │
-│         │                                │              │
-│    Port 3000                        JDBC │              │
-│   (externe)                             ▼              │
-│                               ┌──────────────────┐     │
-│                               │   Base de données│     │
-│                               │   MySQL 8.0      │     │
-│                               │   Port 3306      │     │
-│                               └──────────────────┘     │
-│                                        │               │
-│                                   Port 3307            │
-│                                   (externe)            │
-└─────────────────────────────────────────────────────────┘
+![WhatsApp Image 2026-04-10 at 14 40 41](https://github.com/user-attachments/assets/7459189d-d829-4c2e-919f-07748a3c1a43)
 
-Utilisateur ──▶ http://localhost:3000  (Frontend)
-               http://localhost:8082  (API Backend)
-               localhost:3307         (MySQL - accès direct)
-```
 
 ---
 
@@ -316,12 +292,16 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 
 ![WhatsApp Image 2026-04-10 at 1 08 16 AM](https://github.com/user-attachments/assets/151a1e75-a8e3-4b0e-a725-f60377937554)
 
+## Conteneurs Docker Actifs (backend,frontend,MySQL)
+
+<img width="941" height="382" alt="docker2" src="https://github.com/user-attachments/assets/d69eb0a4-5d6e-4a45-8565-c7b1f06cb3fd" />
+
 ---
 
 ## Auteurs
 
 - **BENBOUKHRIS SALMA**
-- **BAJADDA Asma** 
+- **BAJADDA ASMA** 
 - **AIT MAZOUZ IKRAM**
  
 
