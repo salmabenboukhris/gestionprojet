@@ -66,8 +66,7 @@ La problématique adressée est la suivante : comment assurer un suivi rigoureux
 
 ## Schéma de l'architecture
 
-![WhatsApp Image 2026-04-10 at 21 22 06](https://github.com/user-attachments/assets/f3bca84e-ea56-4b67-8321-4f6de8b56762)
-
+![ccc](https://github.com/user-attachments/assets/e1ab461c-ef78-48ab-ab40-cb56c2acf97e)
 
 
 
