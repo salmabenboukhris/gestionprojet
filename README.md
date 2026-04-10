@@ -319,9 +319,10 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 ---
 
 ## Auteurs
-**BENBOUKHRIS SALMA**
-**BAJADDA Asma** 
-**AIT MAZOUZ IKRAM**
+
+- **BENBOUKHRIS SALMA**
+- **BAJADDA Asma** 
+- **AIT MAZOUZ IKRAM**
  
 
 ---
