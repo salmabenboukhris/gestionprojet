@@ -1,0 +1,222 @@
+/* ==========================================================
+   DESIGN SYSTEM — Suivi Projet ERP
+   Inspired by Stitch enterprise design language
+   ========================================================== */
+
+/* --- Google Font --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* --- CSS Custom Properties (Design Tokens) --- */
+:root {
+  /* Brand Colors */
+  --color-primary: #1a56db;
+  --color-primary-hover: #1648c0;
+  --color-primary-light: #ebf0ff;
+  --color-primary-border: #c7d7fd;
+
+  /* Neutrals */
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+
+  /* Text */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fef2f2;
+  --color-info: #3b82f6;
+  --color-info-bg: #eff6ff;
+
+  /* Sidebar */
+  --sidebar-width: 240px;
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #cbd5e1;
+  --sidebar-text-active: #ffffff;
+  --sidebar-item-active: rgba(26, 86, 219, 0.3);
+  --sidebar-item-hover: rgba(255,255,255,0.06);
+
+  /* Layout */
+  --topbar-height: 64px;
+  --border-radius: 10px;
+  --border-radius-sm: 6px;
+  --border-radius-lg: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 6px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.05);
+  --shadow-lg: 0 10px 15px rgba(15,23,42,0.1), 0 4px 6px rgba(15,23,42,0.05);
+}
+
+/* --- Global Reset --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Ant Design Overrides --- */
+.ant-layout {
+  background: var(--color-bg) !important;
+}
+
+.ant-layout-sider {
+  background: var(--sidebar-bg) !important;
+}
+
+.ant-menu-dark {
+  background: transparent !important;
+}
+
+.ant-menu-dark .ant-menu-item {
+  border-radius: var(--border-radius-sm) !important;
+  margin: 2px 8px !important;
+  width: calc(100% - 16px) !important;
+  color: var(--sidebar-text) !important;
+  transition: all 0.15s ease !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background: var(--sidebar-item-hover) !important;
+  color: var(--sidebar-text-active) !important;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background: var(--sidebar-item-active) !important;
+  color: var(--sidebar-text-active) !important;
+  border-left: 3px solid var(--color-primary) !important;
+}
+
+.ant-card {
+  border-radius: var(--border-radius) !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.ant-btn-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.ant-btn-primary:hover {
+  background-color: var(--color-primary-hover) !important;
+}
+
+.ant-table {
+  border-radius: var(--border-radius) !important;
+  overflow: hidden !important;
+}
+
+.ant-table-thead > tr > th {
+  background: var(--color-border-light) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: var(--color-text-secondary) !important;
+  padding: 12px 16px !important;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid var(--color-border-light) !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: var(--color-primary-light) !important;
+}
+
+/* --- Page Header Style --- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.page-header .subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+/* --- KPI Cards --- */
+.kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-card .kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.kpi-card .kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.kpi-card .kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  color: var(--color-success);
+}
+
+/* --- Status Badges --- */
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-badge.actif { background: var(--color-success-bg); color: var(--color-success); }
+.status-badge.termine { background: var(--color-primary-light); color: var(--color-primary); }
+.status-badge.en-cours { background: var(--color-warning-bg); color: var(--color-warning); }
+.status-badge.en-retard { background: var(--color-danger-bg); color: var(--color-danger); }
+.status-badge.conge { background: var(--color-danger-bg); color: var(--color-danger); }
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
