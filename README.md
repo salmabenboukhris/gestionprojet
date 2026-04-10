@@ -29,12 +29,17 @@ La problématique adressée est la suivante : comment assurer un suivi rigoureux
 - Gestion centralisée des exceptions (`GlobalExceptionHandler`)
 - Documentation auto-générée via Swagger / OpenAPI 3
 
+![WhatsApp Image 2026-04-10 at 1 20 03 AM](https://github.com/user-attachments/assets/afcb357e-04dc-4c48-8cdc-45e1b49f98a0)
+
 ### Frontend (React + Vite) — *Architecture frontend React · Intégration frontend backend*
 - Interface SPA (Single Page Application) servie par Nginx sur le port **3000**
 - Routing côté client géré par React Router
 - Appels API centralisés via Axios avec intercepteurs JWT
 - Proxy Nginx (`/api/*` → `backend:8082`) assurant l'intégration frontend ↔ backend sans CORS
 - Contrôle d'accès aux routes selon le rôle de l'utilisateur connecté
+
+![WhatsApp Image 2026-04-10 at 1 18 53 AM](https://github.com/user-attachments/assets/92ac81e1-d916-4cd2-95e2-6a26c54e4100)
+
 
 ### Base de données — *Modélisation JPA et base de données*
 - MySQL 8.0 avec schéma auto-géré par Hibernate (`ddl-auto: update`)
@@ -266,6 +271,27 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 
 > - Tests manuels via Swagger UI
 
+### Endpoint d'authentification POST /api/auth/login - Récupération du token JWT 
+
+<img width="1349" height="574" alt="Capture d&#39;écran 2026-04-09 184240" src="https://github.com/user-attachments/assets/8ae22385-cbc6-4d3b-98aa-0c2dbbc9d516" />
+
+<img width="1328" height="658" alt="Capture d&#39;écran 2026-04-09 184305" src="https://github.com/user-attachments/assets/452f68fd-9ede-4642-86f1-e8756277bf81" />
+
+<img width="800" height="393" alt="Capture d&#39;écran 2026-04-09 184633" src="https://github.com/user-attachments/assets/5e9c62ba-cb0c-4550-802c-e261930e349c" />
+
+### Récupération de la liste des projets - GET /api/projects
+
+<img width="1296" height="622" alt="Capture d&#39;écran 2026-04-09 184736" src="https://github.com/user-attachments/assets/8f0560a2-e3d7-4d35-aade-a5873110115a" />
+
+### Création d'un organisme - Corps de la requête POST /api/organismes
+
+<img width="1340" height="582" alt="Capture d&#39;écran 2026-04-09 185157" src="https://github.com/user-attachments/assets/426dbc87-40f5-47f7-a71c-a051c7e8ea66" />
+
+<img width="1283" height="609" alt="Capture d&#39;écran 2026-04-09 185140" src="https://github.com/user-attachments/assets/9624fab5-5946-438c-a98a-e9cd6495d44d" />
+
+### Tentative d'accès sans autorisation - GET /api/phases/2/employees
+
+<img width="1291" height="623" alt="Capture d&#39;écran 2026-04-09 185259" src="https://github.com/user-attachments/assets/b278479f-f221-4fab-9a5f-de5120efb218" />
 
 ---
 
@@ -275,6 +301,8 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 - **Dockerfile frontend** : Build multi-stage Node 18 → Nginx Alpine. Vite génère le dossier `dist/` qui est servi statiquement par Nginx.
 - **docker-compose.yml** : Orchestre les 3 services (`db`, `backend`, `frontend`) sur un réseau interne partagé. Le backend attend que MySQL soit sain via `healthcheck` avant de démarrer. Les variables d'environnement surchargent `application.properties` sans modifier le code source.
 
+![WhatsApp Image 2026-04-10 at 1 08 16 AM](https://github.com/user-attachments/assets/151a1e75-a8e3-4b0e-a725-f60377937554)
+
 ---
 
 ## Auteurs
@@ -282,7 +310,7 @@ Lien : [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagg
 
 
 - Nom 1 : BAJADDA Asma 
-- Nom 2 : Prénom NOM 
+- Nom 2 : AIT MAZOUZ IKRAM
 - Nom 3 : Prénom NOM 
 
 ---
