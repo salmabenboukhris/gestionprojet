@@ -283,7 +283,9 @@ https://github.com/user-attachments/assets/9036c66e-913e-46a9-a086-e79428fd7989
 ### PARTIE 6 — Reporting & Recherche par Période —
 Directeur
 
-https://github.com/user-attachments/assets/2570e706-6f95-43d5-8edc-e1f6705f28fd
+
+https://github.com/user-attachments/assets/496b3c17-cfdd-4401-97e5-12a16542f820
+
 
 
 ---
