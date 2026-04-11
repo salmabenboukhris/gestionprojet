@@ -1,6 +1,4 @@
 
-https://github.com/user-attachments/assets/62436cad-32a6-436c-865e-9b6fdc3b739d
-
 # 📊 Suivi Projet
 
 > *Application web de gestion et de suivi de projets*
