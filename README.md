@@ -241,9 +241,35 @@ npm run dev
 
 ## Vidéo de démonstration
 
-
-
 https://github.com/user-attachments/assets/8d97c077-fcaa-4af2-987a-b0a3f5378946
+
+---
+
+
+### PARTIE 1 — Authentification + Dashboard
+
+
+
+
+### PARTIE 2 — UC2 : Gestion des Utilisateurs
+
+
+
+### PARTIE 3 — UC1 : Gestion des Projets — Secrétaire
+
+
+### PARTIE 4 — UC1 : Phases, Affectations, Livrables —
+Chef de Proje
+
+
+### PARTIE 5 — UC3 : Gestion de la Facturation —
+Comptable
+
+
+### PARTIE 6 — Reporting & Recherche par Période —
+Directeur
+
+
 
 
 ---
