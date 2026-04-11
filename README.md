@@ -276,7 +276,7 @@ Comptable
 
 
 
-https://github.com/user-attachments/assets/9036c66e-913e-46a9-a086-e79428fd7989
+https://github.com/user-attachments/assets/496b3c17-cfdd-4401-97e5-12a16542f820
 
 
 
@@ -284,7 +284,6 @@ https://github.com/user-attachments/assets/9036c66e-913e-46a9-a086-e79428fd7989
 Directeur
 
 
-https://github.com/user-attachments/assets/496b3c17-cfdd-4401-97e5-12a16542f820
 
 
 
