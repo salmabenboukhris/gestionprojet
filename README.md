@@ -1,3 +1,4 @@
+
 # 📊 Suivi Projet
 
 > *Application web de gestion et de suivi de projets*
@@ -241,11 +242,6 @@ npm run dev
 
 ## Vidéo de démonstration
 
-https://github.com/user-attachments/assets/8d97c077-fcaa-4af2-987a-b0a3f5378946
-
----
-
-
 ### PARTIE 1 — Authentification + Dashboard
 
 https://github.com/user-attachments/assets/79f256b5-43a6-4eef-85a6-a55afd408c7e
@@ -255,12 +251,19 @@ https://github.com/user-attachments/assets/79f256b5-43a6-4eef-85a6-a55afd408c7e
 
 
 
+https://github.com/user-attachments/assets/5e43808c-1713-4c2f-98ad-2a20ab0b1c3c
+
+
+
 ### PARTIE 3 — UC1 : Gestion des Projets — Secrétaire
 
 
-### PARTIE 4 — UC1 : Phases, Affectations, Livrables —
-Chef de Proje
+https://github.com/user-attachments/assets/c2c2ca09-8c95-49ac-ba29-e1106b1ceb95
 
+
+
+### PARTIE 4 — UC1 : Phases, Affectations, Livrables —
+Chef de Projet
 
 ### PARTIE 5 — UC3 : Gestion de la Facturation —
 Comptable
