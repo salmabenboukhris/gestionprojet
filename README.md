@@ -248,7 +248,7 @@ https://github.com/user-attachments/assets/8d97c077-fcaa-4af2-987a-b0a3f5378946
 
 ### PARTIE 1 — Authentification + Dashboard
 
-
+https://github.com/user-attachments/assets/79f256b5-43a6-4eef-85a6-a55afd408c7e
 
 
 ### PARTIE 2 — UC2 : Gestion des Utilisateurs
