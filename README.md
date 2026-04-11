@@ -272,7 +272,7 @@ Comptable
 ### PARTIE 6 — Reporting & Recherche par Période —
 Directeur
 
-
+https://github.com/user-attachments/assets/2570e706-6f95-43d5-8edc-e1f6705f28fd
 
 
 ---
