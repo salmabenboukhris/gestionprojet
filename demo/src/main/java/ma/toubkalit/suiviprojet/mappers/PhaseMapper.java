@@ -17,6 +17,7 @@ public class PhaseMapper {
                 .dateDebut(dto.getDateDebut())
                 .dateFin(dto.getDateFin())
                 .montant(dto.getMontant())
+                .tauxRealisation(dto.getTauxRealisation() != null ? dto.getTauxRealisation() : 0)
                 .etatRealisation(false)
                 .etatFacturation(false)
                 .etatPaiement(false)
@@ -31,6 +32,9 @@ public class PhaseMapper {
         phase.setDateDebut(dto.getDateDebut());
         phase.setDateFin(dto.getDateFin());
         phase.setMontant(dto.getMontant());
+        if (dto.getTauxRealisation() != null) {
+            phase.setTauxRealisation(dto.getTauxRealisation());
+        }
         phase.setProjet(projet);
     }
 
@@ -46,6 +50,7 @@ public class PhaseMapper {
                 .etatRealisation(phase.getEtatRealisation())
                 .etatFacturation(phase.getEtatFacturation())
                 .etatPaiement(phase.getEtatPaiement())
+                .tauxRealisation(phase.getTauxRealisation())
                 .projetId(phase.getProjet() != null ? phase.getProjet().getId() : null)
                 .projetCode(phase.getProjet() != null ? phase.getProjet().getCode() : null)
                 .projetNom(phase.getProjet() != null ? phase.getProjet().getNom() : null)

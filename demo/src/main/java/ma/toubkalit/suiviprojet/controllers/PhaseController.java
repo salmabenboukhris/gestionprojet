@@ -31,6 +31,12 @@ public class PhaseController {
         return phaseService.create(projetId, requestDto);
     }
 
+    @GetMapping("/api/phases")
+    @Operation(summary = "Lister toutes les phases [ADMIN, CHEF_PROJET]")
+    public List<PhaseResponseDto> getAll() {
+        return phaseService.getAll();
+    }
+
     @GetMapping("/api/projets/{projetId}/phases")
     @Operation(summary = "Lister les phases d'un projet [ADMIN, CHEF_PROJET, SECRETAIRE]")
     public List<PhaseResponseDto> getByProjetId(@PathVariable("projetId") Long projetId) {

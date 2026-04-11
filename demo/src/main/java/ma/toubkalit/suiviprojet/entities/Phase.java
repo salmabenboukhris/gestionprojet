@@ -48,6 +48,9 @@ public class Phase {
     @Column(nullable = false)
     private Boolean etatPaiement = false;
 
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer tauxRealisation = 0;  // 0 à 100 (% d'avancement)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projet_id", nullable = false)
     private Projet projet;

@@ -12,19 +12,15 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = storage.getToken();
-    
-    // LOG REQUEST DEBUG
-    console.log(`[API REQUEST] ${config.method.toUpperCase()} ${config.baseURL || ''}${config.url}`);
-    
+
+    if (import.meta.env.DEV) {
+      console.log(`[API REQUEST] ${config.method.toUpperCase()} ${config.baseURL || ''}${config.url}`);
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log(`[API REQUEST] Authorization Token Added.`);
-    } else {
-      console.log(`[API REQUEST] No token found in storage.`);
     }
-    
-    console.log(`[API REQUEST] Headers:`, config.headers);
-    
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -32,31 +28,33 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    // LOG RESPONSE SUCCESS DEBUG
-    console.log(`[API RESPONSE] ${response.status} OK - ${response.config.url}`);
+    if (import.meta.env.DEV) {
+      console.log(`[API RESPONSE] ${response.status} OK - ${response.config.url}`);
+    }
     return response;
   },
   (error) => {
-    // LOG RESPONSE ERROR DEBUG
-    console.error(`[API ERROR] Failed URL: ${error.config?.baseURL || ''}${error.config?.url}`);
-    console.error(`[API ERROR] Status: ${error.response?.status}`);
-    console.error(`[API ERROR] Message: ${error.message}`);
-    
+    if (import.meta.env.DEV) {
+      console.error(`[API ERROR] ${error.config?.method?.toUpperCase()} ${error.config?.url} → ${error.response?.status}`);
+      if (error.response?.data) {
+        console.error(`[API ERROR] Backend:`, error.response.data);
+      }
+    }
+
     if (error.response) {
-      console.error(`[API ERROR] Backend Response:`, error.response.data);
-      
       if (error.response.status === 401) {
-        console.warn('Non autorisé. Suppression du token.');
+        // Token expiré ou invalide → nettoyage et redirection
         storage.removeToken();
         storage.removeUser();
+        // Redirection vers login si pas déjà sur la page login
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
       }
-      if (error.response.status === 403) {
-        console.warn('Accès interdit.');
-      }
-    } else if (error.request) {
-      console.error(`[API ERROR] No response received from backend (Possible CORS or Network Error). Request:`, error.request);
+    } else if (error.request && import.meta.env.DEV) {
+      console.error(`[API ERROR] Pas de réponse du backend (CORS ou réseau).`);
     }
-    
+
     return Promise.reject(error);
   }
 );

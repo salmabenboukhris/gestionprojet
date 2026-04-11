@@ -7,8 +7,14 @@ import ma.toubkalit.suiviprojet.dto.document.DocumentDownloadDto;
 import ma.toubkalit.suiviprojet.dto.document.DocumentRequestDto;
 import ma.toubkalit.suiviprojet.dto.document.DocumentResponseDto;
 import ma.toubkalit.suiviprojet.services.DocumentService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,11 +30,23 @@ public class DocumentController {
 
     @PostMapping("/api/projets/{projetId}/documents")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Ajouter un document à un projet [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    @Operation(summary = "Ajouter un document (JSON) à un projet [ADMIN, CHEF_PROJET, SECRETAIRE]")
     public DocumentResponseDto create(@PathVariable("projetId") Long projetId,
                                       @Valid @RequestBody DocumentRequestDto requestDto) {
 
         return documentService.create(projetId, requestDto);
+    }
+
+    @PostMapping(value = "/api/projets/{projetId}/documents/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Uploader un fichier document pour un projet [ADMIN, CHEF_PROJET, SECRETAIRE]")
+    public DocumentResponseDto upload(
+            @PathVariable("projetId") Long projetId,
+            @RequestParam("code") String code,
+            @RequestParam("libelle") String libelle,
+            @RequestParam("file") MultipartFile file) {
+
+        return documentService.upload(projetId, code, libelle, file);
     }
 
     @GetMapping("/api/projets/{projetId}/documents")
@@ -63,8 +81,30 @@ public class DocumentController {
 
     @GetMapping("/api/documents/{id}/download")
     @Operation(summary = "Télécharger un document [ADMIN, CHEF_PROJET, SECRETAIRE]")
-    public DocumentDownloadDto download(@PathVariable("id") Long id) {
+    public ResponseEntity<Resource> download(@PathVariable("id") Long id) {
+        DocumentDownloadDto dto = documentService.download(id);
 
-        return documentService.download(id);
+        if (dto.getChemin() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            java.nio.file.Path filePath = java.nio.file.Paths.get(dto.getChemin());
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String filename = filePath.getFileName().toString();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + filename + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
-}
+}

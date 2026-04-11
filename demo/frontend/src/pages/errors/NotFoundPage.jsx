@@ -1,18 +1,34 @@
 import React from 'react';
-import { Card, Result, Button } from 'antd';
+import { Result, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../utils/constants';
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
   return (
-    <Card style={{ margin: 24 }}>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      background: 'var(--color-bg)',
+    }}>
       <Result
         status="404"
-        title="404"
-        subTitle="Désolé, la page que vous cherchez n'existe pas."
-        extra={<Button type="primary" onClick={() => navigate('/')}>Retour à l'accueil</Button>}
+        title={<span style={{ fontWeight: 700 }}>404 — Page Introuvable</span>}
+        subTitle="La page que vous cherchez n'existe pas ou a été déplacée."
+        extra={[
+          <Button
+            type="primary"
+            key="home"
+            onClick={() => navigate(ROUTES.DASHBOARD)}
+            style={{ borderRadius: 8 }}
+          >
+            Retour au Tableau de bord
+          </Button>,
+        ]}
       />
-    </Card>
+    </div>
   );
 };
 

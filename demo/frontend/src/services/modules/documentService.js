@@ -1,38 +1,36 @@
 import api from '../api';
 
-const BASE_PATH = '/documents';
-
 export const documentService = {
-  // GET /api/documents (By ProjetId)
   getByProjet: async (projetId) => {
-    const response = await api.get(BASE_PATH, { params: { projetId } });
+    console.log(`[documentService] GET /projets/${projetId}/documents`);
+    const response = await api.get(`/projets/${projetId}/documents`);
     return response.data;
   },
   
-  // GET /api/documents/{id}
   getById: async (id) => {
-    const response = await api.get(`${BASE_PATH}/${id}`);
+    console.log(`[documentService] GET /documents/${id}`);
+    const response = await api.get(`/documents/${id}`);
     return response.data;
   },
   
-  // POST /api/documents (Généralement multipart formData)
-  create: async (formData) => {
-    const response = await api.post(BASE_PATH, formData, {
+  create: async (projetId, formData) => {
+    // ✅ Endpoint multipart correct : /documents/upload
+    const response = await api.post(`/projets/${projetId}/documents/upload`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
   },
+
   
-  // DELETE /api/documents/{id}
   delete: async (id) => {
-    const response = await api.delete(`${BASE_PATH}/${id}`);
+    console.log(`[documentService] DELETE /documents/${id}`);
+    const response = await api.delete(`/documents/${id}`);
     return response.data;
   },
 
-  // GET /api/documents/{id}/telecharger
-  // Important : responseType spécifié en 'blob' pour télécharger des fichiers
   download: async (id) => {
-    const response = await api.get(`${BASE_PATH}/${id}/telecharger`, {
+    console.log(`[documentService] GET /documents/${id}/download`);
+    const response = await api.get(`/documents/${id}/download`, {
       responseType: 'blob'
     });
     return response.data; 

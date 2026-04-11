@@ -1,23 +1,46 @@
 import api from '../api';
 
+/**
+ * Reporting Service — matches backend /api/reporting endpoints
+ * See ReportingController.java
+ */
 const BASE_PATH = '/reporting';
 
 export const reportingService = {
-  // Global KPIs (GET /api/reporting/kpis)
-  getGlobalKpis: async () => {
-    const response = await api.get(`${BASE_PATH}/kpis`);
+
+  // GET /api/reporting/tableau-de-bord
+  getTableauDeBord: async () => {
+    const response = await api.get(`${BASE_PATH}/tableau-de-bord`);
     return response.data;
   },
-  
-  // Get active projects metrics (example, to adjust with real backend analysis)
-  getProjetsActifs: async () => {
-    const response = await api.get(`${BASE_PATH}/projets-actifs`);
+
+  // GET /api/reporting/projets/en-cours
+  getProjetsEnCours: async () => {
+    const response = await api.get(`${BASE_PATH}/projets/en-cours`);
     return response.data;
   },
-  
-  // Chiffre d'affaires
-  getChiffreAffaires: async (year) => {
-    const response = await api.get(`${BASE_PATH}/chiffre-affaires`, { params: { annee: year }});
+
+  // GET /api/reporting/projets/clotures
+  getProjetsClotures: async () => {
+    const response = await api.get(`${BASE_PATH}/projets/clotures`);
     return response.data;
-  }
+  },
+
+  // GET /api/reporting/phases/terminees-non-facturees
+  getPhasesTermineesNonFacturees: async (params = {}) => {
+    const response = await api.get(`${BASE_PATH}/phases/terminees-non-facturees`, { params });
+    return response.data;
+  },
+
+  // GET /api/reporting/phases/facturees-non-payees
+  getPhasesFactureesNonPayees: async (params = {}) => {
+    const response = await api.get(`${BASE_PATH}/phases/facturees-non-payees`, { params });
+    return response.data;
+  },
+
+  // GET /api/reporting/phases/payees
+  getPhasesPayees: async (params = {}) => {
+    const response = await api.get(`${BASE_PATH}/phases/payees`, { params });
+    return response.data;
+  },
 };

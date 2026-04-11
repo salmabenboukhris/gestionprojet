@@ -22,6 +22,7 @@ public class PhaseResponseDto {
     private Boolean etatRealisation;
     private Boolean etatFacturation;
     private Boolean etatPaiement;
+    private Integer tauxRealisation;  // 0-100
 
     private Long projetId;
     private String projetCode;

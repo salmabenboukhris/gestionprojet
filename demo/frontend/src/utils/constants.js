@@ -1,12 +1,13 @@
 export const API_BASE_URL = '/api';
 
 export const ROLES = {
-  ADMIN: 'ROLE_ADMIN',
-  CHEF_PROJET: 'ROLE_CHEF_PROJET',
-  SECRETAIRE: 'ROLE_SECRETAIRE',
-  COMPTABLE: 'ROLE_COMPTABLE',
-  DIRECTEUR: 'ROLE_DIRECTEUR',
+  ADMIN: 'ADMIN',
+  CHEF_PROJET: 'CHEF_PROJET',
+  SECRETAIRE: 'SECRETAIRE',
+  COMPTABLE: 'COMPTABLE',
+  DIRECTEUR: 'DIRECTEUR',
 };
+
 
 export const ROUTES = {
   LOGIN: '/login',
@@ -20,6 +21,9 @@ export const ROUTES = {
   DOCUMENTS: '/documents',
   FACTURES: '/factures',
   REPORTING: '/reporting',
+  PROFILE: '/profile',
+  CHANGE_PASSWORD: '/change-password',
   NOT_FOUND: '/404',
   UNAUTHORIZED: '/unauthorized',
 };
+

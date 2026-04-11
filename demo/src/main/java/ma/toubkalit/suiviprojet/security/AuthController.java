@@ -8,8 +8,10 @@ import ma.toubkalit.suiviprojet.dto.auth.ChangePasswordRequest;
 import ma.toubkalit.suiviprojet.dto.auth.LoginRequest;
 import ma.toubkalit.suiviprojet.dto.employe.EmployeResponseDto;
 import ma.toubkalit.suiviprojet.services.EmployeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,21 +30,28 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Se connecter pour obtenir un jeton JWT")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
         if (request.getLogin() == null || request.getPassword() == null) {
-            throw new RuntimeException("Login ou mot de passe manquant");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ma.toubkalit.suiviprojet.exceptions.ApiError(400, "Login ou mot de passe manquant"));
         }
 
-        UserDetails user = userDetailsService.loadUserByUsername(request.getLogin());
+        try {
+            UserDetails user = userDetailsService.loadUserByUsername(request.getLogin());
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Mot de passe incorrect");
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ma.toubkalit.suiviprojet.exceptions.ApiError(401, "Identifiant ou mot de passe incorrect"));
+            }
+
+            String token = jwtService.generateToken(user.getUsername());
+            return ResponseEntity.ok(token);
+
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ma.toubkalit.suiviprojet.exceptions.ApiError(401, "Identifiant ou mot de passe incorrect"));
         }
-
-        String token = jwtService.generateToken(user.getUsername());
-
-        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/me")
@@ -55,4 +64,4 @@ public class AuthController {
         employeService.changePassword(principal.getName(), request.getOldPassword(), request.getNewPassword());
         return ResponseEntity.ok().build();
     }
-}
+}

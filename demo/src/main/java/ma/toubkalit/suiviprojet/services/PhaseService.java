@@ -9,6 +9,8 @@ public interface PhaseService {
 
     PhaseResponseDto create(Long projetId, PhaseRequestDto requestDto);
 
+    List<PhaseResponseDto> getAll();
+
     List<PhaseResponseDto> getByProjetId(Long projetId);
 
     PhaseResponseDto getById(Long id);

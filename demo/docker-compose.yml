@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+
+  # ══════════════════════════════════════
+  # Base de données MySQL
+  # ══════════════════════════════════════
+  db:
+    image: mysql:8.0
+    container_name: suivi_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: suivi_projet_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ══════════════════════════════════════
+  # Backend Spring Boot
+  # ══════════════════════════════════════
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: suivi_backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/suivi_projet_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppassword
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "false"
+      JWT_SECRET: ${JWT_SECRET:-Ma$$Cle$$Secrete$$TresLongue$$EtAleatoire$$SuiviProjet$$2026}
+      JWT_EXPIRATION: "86400000"
+      APP_UPLOAD_DIR: /app/uploads
+    ports:
+      - "8082:8082"
+    volumes:
+      - uploads_data:/app/uploads
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  # ══════════════════════════════════════
+  # Frontend React (Nginx)
+  # ══════════════════════════════════════
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: suivi_frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:80"
+    restart: always
+
+volumes:
+  db_data:
+    driver: local
+  uploads_data:
+    driver: local

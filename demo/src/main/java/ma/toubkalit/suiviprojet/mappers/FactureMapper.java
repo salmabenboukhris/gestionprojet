@@ -13,6 +13,8 @@ public class FactureMapper {
         return Facture.builder()
                 .code(dto.getCode())
                 .dateFacture(dto.getDateFacture())
+                .montant(dto.getMontant())
+                .statut(dto.getStatut() != null ? dto.getStatut() : "EN_ATTENTE")
                 .phase(phase)
                 .build();
     }
@@ -20,6 +22,8 @@ public class FactureMapper {
     public void updateEntity(Facture facture, FactureRequestDto dto) {
         facture.setCode(dto.getCode());
         facture.setDateFacture(dto.getDateFacture());
+        if (dto.getMontant() != null) facture.setMontant(dto.getMontant());
+        if (dto.getStatut() != null)  facture.setStatut(dto.getStatut());
     }
 
     public FactureResponseDto toResponseDto(Facture facture) {
@@ -27,6 +31,8 @@ public class FactureMapper {
                 .id(facture.getId())
                 .code(facture.getCode())
                 .dateFacture(facture.getDateFacture())
+                .montant(facture.getMontant())
+                .statut(facture.getStatut())
                 .phaseId(facture.getPhase() != null ? facture.getPhase().getId() : null)
                 .phaseCode(facture.getPhase() != null ? facture.getPhase().getCode() : null)
                 .phaseLibelle(facture.getPhase() != null ? facture.getPhase().getLibelle() : null)
