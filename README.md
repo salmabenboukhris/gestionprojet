@@ -1,4 +1,6 @@
 
+https://github.com/user-attachments/assets/62436cad-32a6-436c-865e-9b6fdc3b739d
+
 # 📊 Suivi Projet
 
 > *Application web de gestion et de suivi de projets*
@@ -265,8 +267,19 @@ https://github.com/user-attachments/assets/c2c2ca09-8c95-49ac-ba29-e1106b1ceb95
 ### PARTIE 4 — UC1 : Phases, Affectations, Livrables —
 Chef de Projet
 
+
+
+
+https://github.com/user-attachments/assets/6c6edff4-52b8-4abb-a91f-eece048043a5
+
+
 ### PARTIE 5 — UC3 : Gestion de la Facturation —
 Comptable
+
+
+
+https://github.com/user-attachments/assets/9036c66e-913e-46a9-a086-e79428fd7989
+
 
 
 ### PARTIE 6 — Reporting & Recherche par Période —
